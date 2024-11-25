@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import News
+from .models import News, NewsImage
 
 
 class NewsSerializer(serializers.ModelSerializer):
@@ -17,3 +17,9 @@ class NewsSerializer(serializers.ModelSerializer):
         if obj.image:
             return obj.image.url
         return None
+
+
+class NewsImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsImage
+        fields = ["image"]

@@ -1,13 +1,15 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse, Http404
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
-from .models import News
-from .serializers import NewsSerializer
+from .models import News, NewsImage
+from .serializers import NewsSerializer, NewsImageSerializer
 from .pagination import CustomPagination
 from urllib.parse import unquote
 from rest_framework.pagination import PageNumberPagination
+import os
+from django.views import View
 
 
 # Create your views here.
@@ -33,3 +35,35 @@ class NewsDetailByTitle(generics.RetrieveAPIView):
             return News.objects.get(title__iexact=title)
         except News.DoesNotExist:
             raise NotFound("News item not found")
+
+
+class NewsImageDetailByFilename(View):
+    def get(self, request, filename):
+        filename = unquote(filename)
+        try:
+            # Iterate through all NewsImage objects and match the filename
+            for news_image in NewsImage.objects.all():
+                if os.path.basename(news_image.image.name) == filename:
+                    image_path = news_image.image.path
+                    return FileResponse(
+                        open(image_path, "rb"), content_type="image/jpeg"
+                    )
+            raise NewsImage.DoesNotExist
+        except NewsImage.DoesNotExist:
+            raise Http404("News image not found")
+
+
+class NewsBannerImage(View):
+    def get(self, request, filename):
+        filename = unquote(filename)
+        try:
+            # Iterate through all News objects and match the filename
+            for news in News.objects.all():
+                if os.path.basename(news.image.name) == filename:
+                    image_path = news.image.path
+                    return FileResponse(
+                        open(image_path, "rb"), content_type="image/jpeg"
+                    )
+            raise Http404("Image not found")
+        except News.DoesNotExist:
+            raise Http404("News item not found")

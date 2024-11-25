@@ -42,6 +42,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+APPEND_SLASH = True
+
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "client.pagination.CustomPagination",
     "PAGE_SIZE": 10,  # Default page size
