@@ -43,8 +43,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 REST_FRAMEWORK = {
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,  # Adjust the page size as needed
+    "DEFAULT_PAGINATION_CLASS": "client.pagination.CustomPagination",
+    "PAGE_SIZE": 10,  # Default page size
 }
 
 # Application definition

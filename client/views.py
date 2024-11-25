@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from .models import News
 from .serializers import NewsSerializer
+from .pagination import CustomPagination
 from urllib.parse import unquote
 from rest_framework.pagination import PageNumberPagination
 
@@ -19,7 +20,7 @@ def index(request):
 class NewsList(generics.ListAPIView):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
-    pagination_class = PageNumberPagination
+    pagination_class = CustomPagination
 
 
 class NewsDetailByTitle(generics.RetrieveAPIView):
