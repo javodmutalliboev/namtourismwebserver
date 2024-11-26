@@ -53,7 +53,11 @@ class Festival(models.Model):
     end_date = models.DateTimeField()
     address = models.CharField(max_length=255)
     category = models.ForeignKey(
-        FestivalCategory, related_name="festivals", on_delete=models.CASCADE
+        FestivalCategory,
+        related_name="festivals",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
     video_i_frame = models.TextField(blank=True, null=True)
     location_i_frame = models.TextField(blank=True, null=True)

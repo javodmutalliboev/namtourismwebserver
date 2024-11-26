@@ -59,9 +59,14 @@ class NewsSerializer(serializers.ModelSerializer):
 
 
 class FestivalImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = FestivalImage
         fields = ["image"]
+
+    def get_image(self, obj):
+        return os.path.basename(obj.image.name)
 
 
 class FestivalCategorySerializer(serializers.ModelSerializer):
@@ -71,8 +76,10 @@ class FestivalCategorySerializer(serializers.ModelSerializer):
 
 
 class FestivalSerializer(serializers.ModelSerializer):
+    slug = serializers.SerializerMethodField()
+    banner = serializers.SerializerMethodField()
     category = FestivalCategorySerializer(read_only=True)
-    images = FestivalImageSerializer(many=True, read_only=True, source="images")
+    images = FestivalImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Festival
@@ -92,3 +99,11 @@ class FestivalSerializer(serializers.ModelSerializer):
             "category",
             "location_i_frame",
         ]
+
+    def get_slug(self, obj):
+        return obj.name.lower().replace(" ", "-")
+
+    def get_banner(self, obj):
+        if obj.banner:
+            return os.path.basename(obj.banner.name)
+        return None

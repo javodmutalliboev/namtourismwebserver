@@ -77,3 +77,4 @@ class FestivalList(generics.ListCreateAPIView):
 class FestivalDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Festival.objects.all()
     serializer_class = FestivalSerializer
+    pagination_class = CustomPagination
