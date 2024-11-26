@@ -53,6 +53,22 @@ class NewsImageDetailByFilename(View):
             raise Http404("News image not found")
 
 
+class FestivalImageDetailByFilename(View):
+    def get(self, request, filename):
+        filename = unquote(filename)
+        try:
+            # Iterate through all Festival objects and match the filename
+            for festival in Festival.objects.all():
+                if os.path.basename(festival.image.name) == filename:
+                    image_path = festival.image.path
+                    return FileResponse(
+                        open(image_path, "rb"), content_type="image/jpeg"
+                    )
+            raise Http404("Image not found")
+        except Festival.DoesNotExist:
+            raise Http404("Festival item not found")
+
+
 class NewsBannerImage(View):
     def get(self, request, filename):
         filename = unquote(filename)
@@ -69,12 +85,35 @@ class NewsBannerImage(View):
             raise Http404("News item not found")
 
 
+class FestivalBannerImage(View):
+    def get(self, request, filename):
+        filename = unquote(filename)
+        try:
+            # Iterate through all Festival objects and match the filename
+            for festival in Festival.objects.all():
+                if os.path.basename(festival.banner_image.name) == filename:
+                    image_path = festival.banner_image.path
+                    return FileResponse(
+                        open(image_path, "rb"), content_type="image/jpeg"
+                    )
+            raise Http404("Image not found")
+        except Festival.DoesNotExist:
+            raise Http404("Festival item not found")
+
+
 class FestivalList(generics.ListCreateAPIView):
     queryset = Festival.objects.all()
     serializer_class = FestivalSerializer
-
-
-class FestivalDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Festival.objects.all()
-    serializer_class = FestivalSerializer
     pagination_class = CustomPagination
+
+
+class FestivalDetail(generics.RetrieveAPIView):
+    serializer_class = FestivalSerializer
+
+    def get_object(self):
+        name = self.kwargs.get("name")
+        name = unquote(name).replace("-", " ").lower()
+        try:
+            return Festival.objects.get(name__iexact=name)
+        except Festival.DoesNotExist:
+            raise NotFound("Festival item not found")
