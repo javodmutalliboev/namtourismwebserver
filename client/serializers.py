@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from .models import News, NewsImage, NewsCategory, Festival, FestivalCategory
+from .models import (
+    News,
+    NewsImage,
+    NewsCategory,
+    Festival,
+    FestivalCategory,
+    FestivalImage,
+)
 import os
 
 
@@ -51,6 +58,12 @@ class NewsSerializer(serializers.ModelSerializer):
         return None
 
 
+class FestivalImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FestivalImage
+        fields = ["image"]
+
+
 class FestivalCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = FestivalCategory
@@ -59,16 +72,23 @@ class FestivalCategorySerializer(serializers.ModelSerializer):
 
 class FestivalSerializer(serializers.ModelSerializer):
     category = FestivalCategorySerializer(read_only=True)
+    images = FestivalImageSerializer(many=True, read_only=True, source="images")
 
     class Meta:
         model = Festival
         fields = [
             "id",
             "name",
+            "slug",
             "description",
+            "created_at",
+            "updated_at",
+            "banner",
             "start_date",
             "end_date",
-            "location",
+            "address",
+            "images",
+            "video_i_frame",
             "category",
-            "image",
+            "location_i_frame",
         ]

@@ -66,6 +66,36 @@ class Festival(models.Model):
         verbose_name_plural = "Festivallar"
 
 
+class FestivalImage(models.Model):
+    festival = models.ForeignKey(
+        Festival, related_name="images", on_delete=models.CASCADE
+    )
+    image = models.ImageField(upload_to=festival_image_upload_path)
+
+    def __str__(self):
+        return f"Image for {self.festival.name}"
+
+    class Meta:
+        verbose_name = "Festival rasm"
+        verbose_name_plural = "Festival rasmlari"
+
+
+@receiver(post_delete, sender=Festival)
+def delete_festival_banner_file(sender, instance, **kwargs):
+    # Delete the banner file when the festival object is deleted
+    if instance.banner:
+        if os.path.isfile(instance.banner.path):
+            os.remove(instance.banner.path)
+
+
+@receiver(post_delete, sender=FestivalImage)
+def delete_festival_image_file(sender, instance, **kwargs):
+    # Delete the image file when the festival image object is deleted
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)
+
+
 class News(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
