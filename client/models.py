@@ -1,6 +1,6 @@
 import os
 from django.db import models
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 from datetime import datetime
 
@@ -84,6 +84,22 @@ class FestivalImage(models.Model):
         verbose_name_plural = "Festival rasmlari"
 
 
+@receiver(pre_save, sender=Festival)
+def delete_old_banner_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+
+    try:
+        old_banner = Festival.objects.get(pk=instance.pk).banner
+    except Festival.DoesNotExist:
+        return False
+
+    new_banner = instance.banner
+    if old_banner and old_banner != new_banner:
+        if os.path.isfile(old_banner.path):
+            os.remove(old_banner.path)
+
+
 @receiver(post_delete, sender=Festival)
 def delete_festival_banner_file(sender, instance, **kwargs):
     # Delete the banner file when the festival object is deleted
@@ -118,6 +134,22 @@ class News(models.Model):
     class Meta:
         verbose_name = "Yangilik"
         verbose_name_plural = "Yangiliklar"
+
+
+@receiver(pre_save, sender=News)
+def delete_old_image_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+
+    try:
+        old_image = News.objects.get(pk=instance.pk).image
+    except News.DoesNotExist:
+        return False
+
+    new_image = instance.image
+    if old_image and old_image != new_image:
+        if os.path.isfile(old_image.path):
+            os.remove(old_image.path)
 
 
 @receiver(post_delete, sender=News)

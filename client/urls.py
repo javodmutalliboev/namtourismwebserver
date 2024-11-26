@@ -28,5 +28,9 @@ urlpatterns = [
         name="news-banner-image",
     ),
     path("api/festivals/", FestivalList.as_view(), name="festival-list"),
-    path("api/festivals/<int:pk>/", FestivalDetail.as_view(), name="festival-detail"),
+    path(
+        "api/festival/<str:name>/",
+        FestivalDetail.as_view(),
+        name="festival-detail-by-name",
+    ),
 ]
