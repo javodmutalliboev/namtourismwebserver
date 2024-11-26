@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import News, NewsImage
+from .models import News, NewsImage, NewsCategory
 import os
 
 
@@ -14,10 +14,17 @@ class NewsImageSerializer(serializers.ModelSerializer):
         return os.path.basename(obj.image.name)
 
 
+class NewsCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsCategory
+        fields = ["id", "name"]
+
+
 class NewsSerializer(serializers.ModelSerializer):
     slug = serializers.SerializerMethodField()
     banner = serializers.SerializerMethodField()
     images = NewsImageSerializer(many=True, read_only=True)
+    category = NewsCategorySerializer(read_only=True)
 
     class Meta:
         model = News
@@ -29,9 +36,10 @@ class NewsSerializer(serializers.ModelSerializer):
             "updated_at",
             "banner",
             "video_i_frame",
-            "location",
+            "location_i_frame",
             "slug",
             "images",
+            "category",
         ]
 
     def get_slug(self, obj):
