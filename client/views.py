@@ -3,8 +3,8 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
-from .models import News, NewsImage
-from .serializers import NewsSerializer, NewsImageSerializer
+from .models import News, NewsImage, Festival
+from .serializers import NewsSerializer, NewsImageSerializer, FestivalSerializer
 from .pagination import CustomPagination
 from urllib.parse import unquote
 from rest_framework.pagination import PageNumberPagination
@@ -67,3 +67,13 @@ class NewsBannerImage(View):
             raise Http404("Image not found")
         except News.DoesNotExist:
             raise Http404("News item not found")
+
+
+class FestivalList(generics.ListCreateAPIView):
+    queryset = Festival.objects.all()
+    serializer_class = FestivalSerializer
+
+
+class FestivalDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Festival.objects.all()
+    serializer_class = FestivalSerializer

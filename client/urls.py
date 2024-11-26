@@ -5,6 +5,8 @@ from .views import (
     NewsDetailByTitle,
     NewsImageDetailByFilename,
     NewsBannerImage,
+    FestivalList,
+    FestivalDetail,
 )
 
 urlpatterns = [
@@ -25,4 +27,6 @@ urlpatterns = [
         NewsBannerImage.as_view(),
         name="news-banner-image",
     ),
+    path("api/festivals/", FestivalList.as_view(), name="festival-list"),
+    path("api/festivals/<int:pk>/", FestivalDetail.as_view(), name="festival-detail"),
 ]

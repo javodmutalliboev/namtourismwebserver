@@ -12,6 +12,13 @@ def news_image_upload_path(instance, filename):
     return os.path.join("news", filename)
 
 
+def festival_image_upload_path(instance, filename):
+    # Generate the filename with the current time including milliseconds
+    current_time = datetime.now().strftime("%Y%m%d%H%M%S%f")
+    filename = f"{current_time}_{filename}"
+    return os.path.join("festivals", filename)
+
+
 class NewsCategory(models.Model):
     name = models.CharField(max_length=100)
 
@@ -21,6 +28,42 @@ class NewsCategory(models.Model):
     class Meta:
         verbose_name = "Yangilik katigoriyasi"
         verbose_name_plural = "Yangilik kategoriyalari"
+
+
+class FestivalCategory(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Festival katigoriyasi"
+        verbose_name_plural = "Festival kategoriyalari"
+
+
+class Festival(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    banner = models.ImageField(
+        upload_to=festival_image_upload_path, blank=True, null=True
+    )
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    address = models.CharField(max_length=255)
+    category = models.ForeignKey(
+        FestivalCategory, related_name="festivals", on_delete=models.CASCADE
+    )
+    video_i_frame = models.TextField(blank=True, null=True)
+    location_i_frame = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Festival"
+        verbose_name_plural = "Festivallar"
 
 
 class News(models.Model):
