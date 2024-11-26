@@ -50,7 +50,7 @@ class NewsSerializer(serializers.ModelSerializer):
         ]
 
     def get_slug(self, obj):
-        return obj.title.lower().replace(" ", "_")
+        return obj.title.lower().replace("-", "--").replace(" ", "-")
 
     def get_banner(self, obj):
         if obj.image:
@@ -101,7 +101,7 @@ class FestivalSerializer(serializers.ModelSerializer):
         ]
 
     def get_slug(self, obj):
-        return obj.name.lower().replace(" ", "_")
+        return obj.name.lower().replace("-", "--").replace(" ", "-")
 
     def get_banner(self, obj):
         if obj.banner:

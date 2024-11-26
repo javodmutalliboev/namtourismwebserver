@@ -30,7 +30,13 @@ class NewsDetailByTitle(generics.RetrieveAPIView):
 
     def get_object(self):
         title = self.kwargs.get("title")
-        title = unquote(title).replace("_", " ").lower()
+        title = (
+            unquote(title)
+            .replace("--", "~")
+            .replace("-", " ")
+            .replace("~", "-")
+            .lower()
+        )
         try:
             return News.objects.get(title__iexact=title)
         except News.DoesNotExist:
@@ -112,7 +118,10 @@ class FestivalDetail(generics.RetrieveAPIView):
 
     def get_object(self):
         name = self.kwargs.get("name")
-        name = unquote(name).replace("_", " ").lower()
+        name = (
+            unquote(name).replace("--", "~").replace("-", " ").replace("~", "-").lower()
+        )
+        print(f"name: {name}")
         try:
             return Festival.objects.get(name__iexact=name)
         except Festival.DoesNotExist:
