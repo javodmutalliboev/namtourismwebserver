@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
-from .models import News, NewsImage, Festival
+from .models import News, NewsImage, Festival, FestivalImage
 from .serializers import NewsSerializer, NewsImageSerializer, FestivalSerializer
 from .pagination import CustomPagination
 from urllib.parse import unquote
@@ -58,7 +58,7 @@ class FestivalImageDetailByFilename(View):
         filename = unquote(filename)
         try:
             # Iterate through all Festival objects and match the filename
-            for festival in Festival.objects.all():
+            for festival in FestivalImage.objects.all():
                 if os.path.basename(festival.image.name) == filename:
                     image_path = festival.image.path
                     return FileResponse(
@@ -91,8 +91,8 @@ class FestivalBannerImage(View):
         try:
             # Iterate through all Festival objects and match the filename
             for festival in Festival.objects.all():
-                if os.path.basename(festival.banner_image.name) == filename:
-                    image_path = festival.banner_image.path
+                if os.path.basename(festival.banner.name) == filename:
+                    image_path = festival.banner.path
                     return FileResponse(
                         open(image_path, "rb"), content_type="image/jpeg"
                     )
