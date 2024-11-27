@@ -29,21 +29,32 @@ class NewsList(generics.ListAPIView):
     serializer_class = NewsSerializer
     pagination_class = CustomPagination
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
 
 class NewsDetailByTitle(generics.RetrieveAPIView):
     serializer_class = NewsSerializer
 
     def get_object(self):
         title = self.kwargs.get("title")
-        title = (
-            unquote(title)
-            .replace("--", "~")
-            .replace("-", " ")
-            .replace("~", "-")
-            .lower()
-        )
+        title = unquote(title).replace("-", " ").replace("~", "-").lower()
+        request = self.request
+        accept_language = request.headers.get("Accept-Language", "en")
+
+        if accept_language == "uz":
+            title_field = "title_uz"
+        elif accept_language == "ru":
+            title_field = "title_ru"
+        else:
+            title_field = "title_en"
+
+        filter_kwargs = {f"{title_field}__iexact": title}
+
         try:
-            return News.objects.get(title__iexact=title)
+            return News.objects.get(**filter_kwargs)
         except News.DoesNotExist:
             raise NotFound("News item not found")
 
@@ -133,9 +144,7 @@ class FestivalDetail(generics.RetrieveAPIView):
 
     def get_object(self):
         name = self.kwargs.get("name")
-        name = (
-            unquote(name).replace("--", "~").replace("-", " ").replace("~", "-").lower()
-        )
+        name = unquote(name).replace("-", " ").replace("~", "-").lower()
         request = self.request
         accept_language = request.headers.get("Accept-Language", "en")
 

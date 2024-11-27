@@ -44,6 +44,8 @@ class NewsSerializer(serializers.ModelSerializer):
     banner = serializers.SerializerMethodField()
     images = NewsImageSerializer(many=True, read_only=True)
     category = NewsCategorySerializer(read_only=True)
+    title = serializers.SerializerMethodField()
+    content = serializers.SerializerMethodField()
 
     class Meta:
         model = News
@@ -61,8 +63,35 @@ class NewsSerializer(serializers.ModelSerializer):
             "category",
         ]
 
+    def get_title(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.title_uz
+            elif accept_language == "ru":
+                return obj.title_ru
+        return obj.title_en
+
+    def get_content(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.content_uz
+            elif accept_language == "ru":
+                return obj.content_ru
+        return obj.content_en
+
     def get_slug(self, obj):
-        return obj.title.lower().replace("-", "--").replace(" ", "-")
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.title_uz.lower().replace("-", "~").replace(" ", "-")
+            elif accept_language == "ru":
+                return obj.title_ru.lower().replace("-", "~").replace(" ", "-")
+        return obj.title_en.lower().replace("-", "~").replace(" ", "-")
 
     def get_banner(self, obj):
         if obj.image:
@@ -130,10 +159,10 @@ class FestivalSerializer(serializers.ModelSerializer):
         if request:
             accept_language = request.headers.get("Accept-Language", "en")
             if accept_language == "uz":
-                return obj.name_uz.lower().replace("-", "--").replace(" ", "-")
+                return obj.name_uz.lower().replace("-", "~").replace(" ", "-")
             elif accept_language == "ru":
-                return obj.name_ru.lower().replace("-", "--").replace(" ", "-")
-        return obj.name_en.lower().replace("-", "--").replace(" ", "-")
+                return obj.name_ru.lower().replace("-", "~").replace(" ", "-")
+        return obj.name_en.lower().replace("-", "~").replace(" ", "-")
 
     def get_description(self, obj):
         request = self.context.get("request")
