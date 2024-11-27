@@ -125,8 +125,12 @@ def delete_festival_image_file(sender, instance, **kwargs):
 
 
 class News(models.Model):
-    title = models.CharField(max_length=255)
-    content = models.TextField()
+    title_uz = models.CharField(max_length=255)
+    title_en = models.CharField(max_length=255, blank=True, null=True)
+    title_ru = models.CharField(max_length=255, blank=True, null=True)
+    content_uz = models.TextField()
+    content_en = models.TextField(blank=True, null=True)
+    content_ru = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to=news_image_upload_path)
@@ -137,7 +141,7 @@ class News(models.Model):
     )
 
     def __str__(self):
-        return self.title
+        return self.title_uz or ""
 
     class Meta:
         verbose_name = "Yangilik"
@@ -173,7 +177,7 @@ class NewsImage(models.Model):
     image = models.ImageField(upload_to=news_image_upload_path)
 
     def __str__(self):
-        return f"Image for {self.news.title}"
+        return f"Image for {self.news.title_uz or ''}"
 
     class Meta:
         verbose_name = "Yangilik Rasmi"
