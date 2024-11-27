@@ -126,14 +126,30 @@ class FestivalList(generics.ListCreateAPIView):
 class FestivalDetail(generics.RetrieveAPIView):
     serializer_class = FestivalSerializer
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
     def get_object(self):
         name = self.kwargs.get("name")
         name = (
             unquote(name).replace("--", "~").replace("-", " ").replace("~", "-").lower()
         )
-        print(f"name: {name}")
+        request = self.request
+        accept_language = request.headers.get("Accept-Language", "en")
+
+        if accept_language == "uz":
+            name_field = "name_uz"
+        elif accept_language == "ru":
+            name_field = "name_ru"
+        else:
+            name_field = "name_en"
+
+        filter_kwargs = {f"{name_field}__iexact": name}
+
         try:
-            return Festival.objects.get(name__iexact=name)
+            return Festival.objects.get(**filter_kwargs)
         except Festival.DoesNotExist:
             raise NotFound("Festival item not found")
 
