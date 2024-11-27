@@ -149,8 +149,21 @@ class NewsListByCategoryName(generics.ListAPIView):
 
     def get_queryset(self):
         category_name = self.kwargs.get("category_name")
+        request = self.request
+        accept_language = request.headers.get("Accept-Language", "en")
+
+        if accept_language == "uz":
+            category_field = "name_uz"
+        elif accept_language == "ru":
+            category_field = "name_ru"
+        else:
+            category_field = "name_en"
+
+        filter_kwargs = {f"{category_field}__iexact": category_name}
+
         try:
-            category = NewsCategory.objects.get(name__iexact=category_name)
+            category = NewsCategory.objects.get(**filter_kwargs)
         except NewsCategory.DoesNotExist:
             raise NotFound("News category not found")
+
         return News.objects.filter(category=category)
