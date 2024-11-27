@@ -117,6 +117,11 @@ class FestivalList(generics.ListCreateAPIView):
     serializer_class = FestivalSerializer
     pagination_class = CustomPagination
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
 
 class FestivalDetail(generics.RetrieveAPIView):
     serializer_class = FestivalSerializer

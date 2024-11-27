@@ -44,8 +44,12 @@ class FestivalCategory(models.Model):
 
 
 class Festival(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
+    name_uz = models.CharField(max_length=255, blank=True, null=True)
+    name_en = models.CharField(max_length=255, blank=True, null=True)
+    name_ru = models.CharField(max_length=255, blank=True, null=True)
+    description_uz = models.TextField(blank=True, null=True)
+    description_en = models.TextField(blank=True, null=True)
+    description_ru = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     banner = models.ImageField(
@@ -53,7 +57,9 @@ class Festival(models.Model):
     )
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    address = models.CharField(max_length=255)
+    address_uz = models.CharField(max_length=255, blank=True, null=True)
+    address_en = models.CharField(max_length=255, blank=True, null=True)
+    address_ru = models.CharField(max_length=255, blank=True, null=True)
     category = models.ForeignKey(
         FestivalCategory,
         related_name="festivals",
@@ -65,7 +71,7 @@ class Festival(models.Model):
     location_i_frame = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.name_uz or ""
 
     class Meta:
         verbose_name = "Festival"
@@ -79,7 +85,7 @@ class FestivalImage(models.Model):
     image = models.ImageField(upload_to=festival_image_upload_path)
 
     def __str__(self):
-        return f"Image for {self.festival.name}"
+        return f"Image for {self.festival.name_uz or ''}"
 
     class Meta:
         verbose_name = "Festival rasm"

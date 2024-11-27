@@ -92,6 +92,9 @@ class FestivalSerializer(serializers.ModelSerializer):
     banner = serializers.SerializerMethodField()
     category = FestivalCategorySerializer(read_only=True)
     images = FestivalImageSerializer(many=True, read_only=True)
+    name = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    address = serializers.SerializerMethodField()
 
     class Meta:
         model = Festival
@@ -112,8 +115,45 @@ class FestivalSerializer(serializers.ModelSerializer):
             "location_i_frame",
         ]
 
+    def get_name(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.name_uz
+            elif accept_language == "ru":
+                return obj.name_ru
+        return obj.name_en
+
     def get_slug(self, obj):
-        return obj.name.lower().replace("-", "--").replace(" ", "-")
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.name_uz.lower().replace("-", "--").replace(" ", "-")
+            elif accept_language == "ru":
+                return obj.name_ru.lower().replace("-", "--").replace(" ", "-")
+        return obj.name_en.lower().replace("-", "--").replace(" ", "-")
+
+    def get_description(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.description_uz
+            elif accept_language == "ru":
+                return obj.description_ru
+        return obj.description_en
+
+    def get_address(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.address_uz
+            elif accept_language == "ru":
+                return obj.address_ru
+        return obj.address_en
 
     def get_banner(self, obj):
         if obj.banner:
