@@ -136,3 +136,15 @@ class FestivalDetail(generics.RetrieveAPIView):
 class NewsCategoryList(generics.ListAPIView):
     queryset = NewsCategory.objects.all()
     serializer_class = NewsCategorySerializer
+
+
+class NewsListByCategoryName(generics.ListAPIView):
+    serializer_class = NewsSerializer
+
+    def get_queryset(self):
+        category_name = self.kwargs.get("category_name")
+        try:
+            category = NewsCategory.objects.get(name__iexact=category_name)
+        except NewsCategory.DoesNotExist:
+            raise NotFound("News category not found")
+        return News.objects.filter(category=category)

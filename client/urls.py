@@ -10,6 +10,7 @@ from .views import (
     FestivalBannerImage,
     FestivalImageDetailByFilename,
     NewsCategoryList,
+    NewsListByCategoryName,
 )
 
 urlpatterns = [
@@ -47,4 +48,9 @@ urlpatterns = [
         name="festival-image-detail-by-filename",
     ),
     path("api/news-categories/", NewsCategoryList.as_view(), name="news-category-list"),
+    path(
+        "api/news/category/<str:category_name>/",
+        NewsListByCategoryName.as_view(),
+        name="news-list-by-category-name",
+    ),
 ]
