@@ -22,9 +22,21 @@ class NewsImageSerializer(serializers.ModelSerializer):
 
 
 class NewsCategorySerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
     class Meta:
         model = NewsCategory
         fields = ["id", "name"]
+
+    def get_name(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.name_uz
+            elif accept_language == "ru":
+                return obj.name_ru
+        return obj.name_en
 
 
 class NewsSerializer(serializers.ModelSerializer):

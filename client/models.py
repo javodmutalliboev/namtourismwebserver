@@ -20,10 +20,12 @@ def festival_image_upload_path(instance, filename):
 
 
 class NewsCategory(models.Model):
-    name = models.CharField(max_length=100)
+    name_uz = models.CharField(max_length=100, blank=True, null=True)
+    name_en = models.CharField(max_length=100, blank=True, null=True)
+    name_ru = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.name_uz or ""
 
     class Meta:
         verbose_name = "Yangilik katigoriyasi"

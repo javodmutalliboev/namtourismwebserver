@@ -136,6 +136,12 @@ class FestivalDetail(generics.RetrieveAPIView):
 class NewsCategoryList(generics.ListAPIView):
     queryset = NewsCategory.objects.all()
     serializer_class = NewsCategorySerializer
+    pagination_class = None
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
 
 
 class NewsListByCategoryName(generics.ListAPIView):
