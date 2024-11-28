@@ -14,6 +14,7 @@ from .models import (
     AboutUs,
     PhotoGallery,
     PhotoGalleryImage,
+    FestivalCategory,
 )
 from .serializers import (
     NewsSerializer,
@@ -177,6 +178,42 @@ class FestivalList(generics.ListCreateAPIView):
     queryset = Festival.objects.all()
     serializer_class = FestivalSerializer
     pagination_class = CustomPagination
+
+    def get_queryset(self):
+        queryset = Festival.objects.all()
+        search = self.request.query_params.get("search", None)
+        category_name = self.request.query_params.get("category", None)
+        accept_language = self.request.headers.get("Accept-Language", "en")
+
+        if accept_language == "uz":
+            title_field = "title_uz"
+            description_field = "description_uz"
+            category_field = "name_uz"
+        elif accept_language == "ru":
+            title_field = "title_ru"
+            description_field = "description_ru"
+            category_field = "name_ru"
+        else:
+            title_field = "title_en"
+            description_field = "description_en"
+            category_field = "name_en"
+
+        if search:
+            queryset = queryset.filter(
+                Q(**{f"{title_field}__icontains": search})
+                | Q(**{f"{description_field}__icontains": search})
+            )
+
+        if category_name:
+            try:
+                category = FestivalCategory.objects.get(
+                    **{f"{category_field}__iexact": category_name}
+                )
+                queryset = queryset.filter(category=category)
+            except FestivalCategory.DoesNotExist:
+                queryset = queryset.none()
+
+        return queryset
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
