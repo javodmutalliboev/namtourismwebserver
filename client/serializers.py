@@ -231,10 +231,11 @@ class SponsorSerializer(serializers.ModelSerializer):
 class AboutUsSerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     content = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = AboutUs
-        fields = ["id", "title", "content"]
+        fields = ["id", "title", "content", "image"]
 
     def get_title(self, obj):
         request = self.context.get("request")
@@ -255,3 +256,8 @@ class AboutUsSerializer(serializers.ModelSerializer):
             elif accept_language == "ru":
                 return obj.content_ru
         return obj.content_en
+
+    def get_image(self, obj):
+        if obj.image:
+            return os.path.basename(obj.image.name)
+        return None

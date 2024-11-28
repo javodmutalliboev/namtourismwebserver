@@ -33,6 +33,13 @@ def sponsor_logo_upload_path(instance, filename):
     return os.path.join("sponsors", filename)
 
 
+def about_us_image_upload_path(instance, filename):
+    # Generate the filename with the current time including milliseconds
+    current_time = datetime.now().strftime("%Y%m%d%H%M%S%f")
+    filename = f"{current_time}_{filename}"
+    return os.path.join("about_us", filename)
+
+
 class NewsCategory(models.Model):
     name_uz = models.CharField(max_length=100, blank=True, null=True)
     name_en = models.CharField(max_length=100, blank=True, null=True)
@@ -294,6 +301,9 @@ class AboutUs(models.Model):
     content_uz = models.TextField(blank=True, null=True)
     content_en = models.TextField(blank=True, null=True)
     content_ru = models.TextField(blank=True, null=True)
+    image = models.ImageField(
+        upload_to=about_us_image_upload_path, blank=True, null=True
+    )
 
     def __str__(self):
         return self.title_uz
@@ -301,3 +311,27 @@ class AboutUs(models.Model):
     class Meta:
         verbose_name = "Biz haqimizda"
         verbose_name_plural = "Biz haqimizda"
+
+
+@receiver(pre_save, sender=AboutUs)
+def delete_old_image_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+
+    try:
+        old_image = AboutUs.objects.get(pk=instance.pk).image
+    except AboutUs.DoesNotExist:
+        return False
+
+    new_image = instance.image
+    if old_image and old_image != new_image:
+        if os.path.isfile(old_image.path):
+            os.remove(old_image.path)
+
+
+@receiver(post_delete, sender=AboutUs)
+def delete_about_us_image_file(sender, instance, **kwargs):
+    # Delete the image file when the about us object is deleted
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)
