@@ -15,6 +15,7 @@ from urllib.parse import unquote
 from rest_framework.pagination import PageNumberPagination
 import os
 from django.views import View
+from django.db.models import Q
 
 
 # Create your views here.
@@ -25,9 +26,44 @@ def index(request):
 
 
 class NewsList(generics.ListAPIView):
-    queryset = News.objects.all()
     serializer_class = NewsSerializer
     pagination_class = CustomPagination
+
+    def get_queryset(self):
+        queryset = News.objects.all()
+        search = self.request.query_params.get("search", None)
+        category_name = self.request.query_params.get("category", None)
+        accept_language = self.request.headers.get("Accept-Language", "en")
+
+        if accept_language == "uz":
+            title_field = "title_uz"
+            content_field = "content_uz"
+            category_field = "name_uz"
+        elif accept_language == "ru":
+            title_field = "title_ru"
+            content_field = "content_ru"
+            category_field = "name_ru"
+        else:
+            title_field = "title_en"
+            content_field = "content_en"
+            category_field = "name_en"
+
+        if search:
+            queryset = queryset.filter(
+                Q(**{f"{title_field}__icontains": search})
+                | Q(**{f"{content_field}__icontains": search})
+            )
+
+        if category_name:
+            try:
+                category = NewsCategory.objects.get(
+                    **{f"{category_field}__iexact": category_name}
+                )
+                queryset = queryset.filter(category=category)
+            except NewsCategory.DoesNotExist:
+                queryset = queryset.none()
+
+        return queryset
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
