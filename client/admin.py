@@ -13,6 +13,7 @@ from .models import (
     PhotoGalleryImage,
     PhotoGalleryCategory,
     FestivalPoster,
+    Contact,
 )
 
 
@@ -54,6 +55,7 @@ admin.site.register(AboutUs)
 admin.site.register(PhotoGallery, PhotoGalleryAdmin)
 admin.site.register(PhotoGalleryCategory)
 admin.site.register(FestivalPoster)
+admin.site.register(Contact)
 
 
 admin.site.site_header = "Nam Tourism"

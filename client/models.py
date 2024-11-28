@@ -489,3 +489,19 @@ def delete_festival_poster_video_file(sender, instance, **kwargs):
     if instance.video:
         if os.path.isfile(instance.video.path):
             os.remove(instance.video.path)
+
+
+class Contact(models.Model):
+    phone = models.CharField(max_length=20)
+    additional_phone = models.CharField(max_length=20, blank=True, null=True)
+    address = models.CharField(max_length=255)
+    location_i_frame = models.TextField(blank=True, null=True)
+    postal_index = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.email
+
+    class Meta:
+        verbose_name = "Bog'lanish"
+        verbose_name_plural = "Bog'lanish"

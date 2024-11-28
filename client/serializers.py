@@ -13,6 +13,7 @@ from .models import (
     PhotoGalleryImage,
     PhotoGalleryCategory,
     FestivalPoster,
+    Contact,
 )
 import os
 
@@ -411,3 +412,17 @@ class FestivalPosterSerializer(serializers.ModelSerializer):
         if obj.video:
             return os.path.basename(obj.video.name)
         return None
+
+
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = [
+            "id",
+            "phone",
+            "additional_phone",
+            "address",
+            "location_i_frame",
+            "postal_index",
+            "email",
+        ]

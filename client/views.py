@@ -17,6 +17,7 @@ from .models import (
     FestivalCategory,
     PhotoGalleryCategory,
     FestivalPoster,
+    Contact,
 )
 from .serializers import (
     NewsSerializer,
@@ -28,6 +29,7 @@ from .serializers import (
     PhotoGallerySerializer,
     PhotoGalleryCategorySerializer,
     FestivalPosterSerializer,
+    ContactSerializer,
 )
 from .pagination import CustomPagination
 from urllib.parse import unquote
@@ -560,3 +562,14 @@ class FestivalPosterVideoDetail(View):
             raise Http404("Video not found")
         except FestivalPoster.DoesNotExist:
             raise Http404("Festival poster not found")
+
+
+class ContactList(generics.ListCreateAPIView):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+    pagination_class = None
+
+
+class ContactDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
