@@ -22,6 +22,7 @@ from .views import (
     PhotoGalleryCategoryList,
     FestivalPosterList,
     FestivalPosterDetailByTitle,
+    FestivalPosterLogoDetail,
 )
 
 urlpatterns = [
@@ -102,5 +103,10 @@ urlpatterns = [
         "api/festival-poster/<str:title>/",
         FestivalPosterDetailByTitle.as_view(),
         name="festival-poster-detail-by-title",
+    ),
+    path(
+        "api/festival-poster/logo/<str:filename>/",
+        FestivalPosterLogoDetail.as_view(),
+        name="festival-poster-logo-detail",
     ),
 ]

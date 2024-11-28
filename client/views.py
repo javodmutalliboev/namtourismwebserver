@@ -492,3 +492,19 @@ class FestivalPosterDetailByTitle(generics.RetrieveAPIView):
             return FestivalPoster.objects.get(**filter_kwargs)
         except FestivalPoster.DoesNotExist:
             raise NotFound("Festival poster item not found")
+
+
+class FestivalPosterLogoDetail(View):
+    def get(self, request, filename):
+        filename = unquote(filename)
+        try:
+            # Iterate through all FestivalPoster objects and match the filename
+            for festival_poster in FestivalPoster.objects.all():
+                if os.path.basename(festival_poster.logo.name) == filename:
+                    image_path = festival_poster.logo.path
+                    return FileResponse(
+                        open(image_path, "rb"), content_type="image/jpeg"
+                    )
+            raise Http404("Logo not found")
+        except FestivalPoster.DoesNotExist:
+            raise Http404("Festival poster not found")
