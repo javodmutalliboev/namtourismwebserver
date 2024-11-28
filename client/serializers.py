@@ -193,11 +193,11 @@ class FestivalSerializer(serializers.ModelSerializer):
 
 class SocialMediaSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
-    icon = serializers.SerializerMethodField()
+    # icon = serializers.SerializerMethodField()
 
     class Meta:
         model = SocialMedia
-        fields = ["id", "name", "url", "icon"]
+        fields = ["id", "name", "url"]
 
     def get_name(self, obj):
         request = self.context.get("request")
@@ -209,5 +209,7 @@ class SocialMediaSerializer(serializers.ModelSerializer):
                 return obj.name_ru
         return obj.name_en
 
+    """
     def get_icon(self, obj):
         return os.path.basename(obj.icon.name)
+    """

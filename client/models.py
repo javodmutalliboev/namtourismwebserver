@@ -204,9 +204,11 @@ class SocialMedia(models.Model):
     name_en = models.CharField(max_length=100, blank=True, null=True)
     name_ru = models.CharField(max_length=100, blank=True, null=True)
     url = models.URLField()
+    """
     icon = models.ImageField(
         upload_to=social_media_icon_upload_path, blank=True, null=True
     )
+    """
 
     def __str__(self):
         return self.name_uz  # Default to Uzbek name for display
@@ -216,6 +218,7 @@ class SocialMedia(models.Model):
         verbose_name_plural = "Ijtimoiy tarmoqlar"
 
 
+"""
 @receiver(pre_save, sender=SocialMedia)
 def delete_old_icon_on_change(sender, instance, **kwargs):
     if not instance.pk:
@@ -231,10 +234,10 @@ def delete_old_icon_on_change(sender, instance, **kwargs):
         if os.path.isfile(old_icon.path):
             os.remove(old_icon.path)
 
-
 @receiver(post_delete, sender=SocialMedia)
 def delete_social_media_icon_file(sender, instance, **kwargs):
     # Delete the icon file when the social media object is deleted
     if instance.icon:
         if os.path.isfile(instance.icon.path):
             os.remove(instance.icon.path)
+"""
