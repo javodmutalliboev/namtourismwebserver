@@ -8,6 +8,7 @@ from .models import (
     FestivalImage,
     SocialMedia,
     Sponsor,
+    AboutUs,
 )
 import os
 
@@ -225,3 +226,32 @@ class SponsorSerializer(serializers.ModelSerializer):
 
     def get_logo(self, obj):
         return os.path.basename(obj.logo.name)
+
+
+class AboutUsSerializer(serializers.ModelSerializer):
+    title = serializers.SerializerMethodField()
+    content = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AboutUs
+        fields = ["id", "title", "content"]
+
+    def get_title(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.title_uz
+            elif accept_language == "ru":
+                return obj.title_ru
+        return obj.title_en
+
+    def get_content(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.content_uz
+            elif accept_language == "ru":
+                return obj.content_ru
+        return obj.content_en

@@ -256,7 +256,7 @@ class Sponsor(models.Model):
     logo = models.ImageField(upload_to=sponsor_logo_upload_path, blank=True, null=True)
 
     def __str__(self):
-        return self.name or "" 
+        return self.name or ""
 
     class Meta:
         verbose_name = "Homiy"
@@ -285,3 +285,19 @@ def delete_sponsor_logo_file(sender, instance, **kwargs):
     if instance.logo:
         if os.path.isfile(instance.logo.path):
             os.remove(instance.logo.path)
+
+
+class AboutUs(models.Model):
+    title_uz = models.CharField(max_length=200, blank=True, null=True)
+    title_en = models.CharField(max_length=200, blank=True, null=True)
+    title_ru = models.CharField(max_length=200, blank=True, null=True)
+    content_uz = models.TextField(blank=True, null=True)
+    content_en = models.TextField(blank=True, null=True)
+    content_ru = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.title_uz
+
+    class Meta:
+        verbose_name = "Biz haqimizda"
+        verbose_name_plural = "Biz haqimizda"

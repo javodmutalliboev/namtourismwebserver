@@ -8,6 +8,7 @@ from .models import (
     FestivalImage,
     SocialMedia,
     Sponsor,
+    AboutUs,
 )
 
 
@@ -36,6 +37,7 @@ admin.site.register(NewsCategory)
 admin.site.register(News, NewsAdmin)
 admin.site.register(SocialMedia)
 admin.site.register(Sponsor)
+admin.site.register(AboutUs)
 
 
 admin.site.site_header = "Nam Tourism"

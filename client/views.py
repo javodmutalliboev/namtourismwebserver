@@ -11,6 +11,7 @@ from .models import (
     NewsCategory,
     SocialMedia,
     Sponsor,
+    AboutUs,
 )
 from .serializers import (
     NewsSerializer,
@@ -19,6 +20,7 @@ from .serializers import (
     NewsCategorySerializer,
     SocialMediaSerializer,
     SponsorSerializer,
+    AboutUsSerializer,
 )
 from .pagination import CustomPagination
 from urllib.parse import unquote
@@ -300,3 +302,23 @@ class SponsorLogoDetail(View):
             raise Http404("Logo not found")
         except Sponsor.DoesNotExist:
             raise Http404("Sponsor not found")
+
+
+class AboutUsList(generics.ListCreateAPIView):
+    queryset = AboutUs.objects.all()
+    serializer_class = AboutUsSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
+
+class AboutUsDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = AboutUs.objects.all()
+    serializer_class = AboutUsSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
