@@ -364,6 +364,8 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
 class FestivalPosterSerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
+    logo = serializers.SerializerMethodField()
+    video = serializers.SerializerMethodField()
 
     class Meta:
         model = FestivalPoster
@@ -388,3 +390,13 @@ class FestivalPosterSerializer(serializers.ModelSerializer):
             elif accept_language == "ru":
                 return obj.description_ru
         return obj.description_en
+
+    def get_logo(self, obj):
+        if obj.logo:
+            return os.path.basename(obj.logo.name)
+        return None
+
+    def get_video(self, obj):
+        if obj.video:
+            return os.path.basename(obj.video.name)
+        return None

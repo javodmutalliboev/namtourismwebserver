@@ -452,6 +452,7 @@ class PhotoGalleryCategoryList(generics.ListAPIView):
 class FestivalPosterList(generics.ListCreateAPIView):
     queryset = FestivalPoster.objects.all()
     serializer_class = FestivalPosterSerializer
+    pagination_class = None
 
     def get_serializer_context(self):
         context = super().get_serializer_context()

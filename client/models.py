@@ -54,6 +54,13 @@ def festival_poster_logo_upload_path(instance, filename):
     return os.path.join("festival_poster", filename)
 
 
+def festival_poster_video_upload_path(instance, filename):
+    # Generate the filename with the current time including milliseconds
+    current_time = datetime.now().strftime("%Y%m%d%H%M%S%f")
+    filename = f"{current_time}_{filename}"
+    return os.path.join("festival_poster", filename)
+
+
 class NewsCategory(models.Model):
     name_uz = models.CharField(max_length=100, blank=True, null=True)
     name_en = models.CharField(max_length=100, blank=True, null=True)
@@ -424,7 +431,9 @@ class FestivalPoster(models.Model):
     logo = models.ImageField(
         upload_to=festival_poster_logo_upload_path, blank=True, null=True
     )
-    video = models.URLField(blank=True, null=True)
+    video = models.FileField(
+        upload_to=festival_poster_video_upload_path, blank=True, null=True
+    )
 
     def __str__(self):
         return self.title_en or self.title_uz or self.title_ru
@@ -432,3 +441,51 @@ class FestivalPoster(models.Model):
     class Meta:
         verbose_name = "Festival Poster"
         verbose_name_plural = "Festival Poster"
+
+
+@receiver(pre_save, sender=FestivalPoster)
+def delete_old_logo_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+
+    try:
+        old_logo = FestivalPoster.objects.get(pk=instance.pk).logo
+    except FestivalPoster.DoesNotExist:
+        return False
+
+    new_logo = instance.logo
+    if old_logo and old_logo != new_logo:
+        if os.path.isfile(old_logo.path):
+            os.remove(old_logo.path)
+
+
+@receiver(pre_save, sender=FestivalPoster)
+def delete_old_video_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+
+    try:
+        old_video = FestivalPoster.objects.get(pk=instance.pk).video
+    except FestivalPoster.DoesNotExist:
+        return False
+
+    new_video = instance.video
+    if old_video and old_video != new_video:
+        if os.path.isfile(old_video.path):
+            os.remove(old_video.path)
+
+
+@receiver(post_delete, sender=FestivalPoster)
+def delete_festival_poster_logo_file(sender, instance, **kwargs):
+    # Delete the logo file when the festival poster object is deleted
+    if instance.logo:
+        if os.path.isfile(instance.logo.path):
+            os.remove(instance.logo.path)
+
+
+@receiver(post_delete, sender=FestivalPoster)
+def delete_festival_poster_video_file(sender, instance, **kwargs):
+    # Delete the video file when the festival poster object is deleted
+    if instance.video:
+        if os.path.isfile(instance.video.path):
+            os.remove(instance.video.path)
