@@ -16,6 +16,7 @@ from .models import (
     PhotoGalleryImage,
     FestivalCategory,
     PhotoGalleryCategory,
+    FestivalPoster,
 )
 from .serializers import (
     NewsSerializer,
@@ -26,6 +27,7 @@ from .serializers import (
     AboutUsSerializer,
     PhotoGallerySerializer,
     PhotoGalleryCategorySerializer,
+    FestivalPosterSerializer,
 )
 from .pagination import CustomPagination
 from urllib.parse import unquote
@@ -445,3 +447,23 @@ class PhotoGalleryCategoryList(generics.ListAPIView):
     queryset = PhotoGalleryCategory.objects.all()
     serializer_class = PhotoGalleryCategorySerializer
     pagination_class = None
+
+
+class FestivalPosterList(generics.ListCreateAPIView):
+    queryset = FestivalPoster.objects.all()
+    serializer_class = FestivalPosterSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
+
+class FestivalPosterDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = FestivalPoster.objects.all()
+    serializer_class = FestivalPosterSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context

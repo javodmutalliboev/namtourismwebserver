@@ -47,6 +47,13 @@ def photo_gallery_image_upload_path(instance, filename):
     return os.path.join("photo_gallery", filename)
 
 
+def festival_poster_logo_upload_path(instance, filename):
+    # Generate the filename with the current time including milliseconds
+    current_time = datetime.now().strftime("%Y%m%d%H%M%S%f")
+    filename = f"{current_time}_{filename}"
+    return os.path.join("festival_poster", filename)
+
+
 class NewsCategory(models.Model):
     name_uz = models.CharField(max_length=100, blank=True, null=True)
     name_en = models.CharField(max_length=100, blank=True, null=True)
@@ -405,3 +412,23 @@ def delete_photo_gallery_image_file(sender, instance, **kwargs):
     if instance.image:
         if os.path.isfile(instance.image.path):
             os.remove(instance.image.path)
+
+
+class FestivalPoster(models.Model):
+    title_uz = models.CharField(max_length=255, blank=True, null=True)
+    title_en = models.CharField(max_length=255, blank=True, null=True)
+    title_ru = models.CharField(max_length=255, blank=True, null=True)
+    description_uz = models.TextField(blank=True, null=True)
+    description_en = models.TextField(blank=True, null=True)
+    description_ru = models.TextField(blank=True, null=True)
+    logo = models.ImageField(
+        upload_to=festival_poster_logo_upload_path, blank=True, null=True
+    )
+    video = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return self.title_en or self.title_uz or self.title_ru
+
+    class Meta:
+        verbose_name = "Festival Poster"
+        verbose_name_plural = "Festival Poster"

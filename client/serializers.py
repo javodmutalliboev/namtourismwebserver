@@ -12,6 +12,7 @@ from .models import (
     PhotoGallery,
     PhotoGalleryImage,
     PhotoGalleryCategory,
+    FestivalPoster,
 )
 import os
 
@@ -358,3 +359,32 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
             elif accept_language == "ru":
                 return obj.title_ru.lower().replace("-", "~").replace(" ", "-")
         return obj.title_en.lower().replace("-", "~").replace(" ", "-")
+
+
+class FestivalPosterSerializer(serializers.ModelSerializer):
+    title = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FestivalPoster
+        fields = ["id", "title", "description", "logo", "video"]
+
+    def get_title(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.title_uz
+            elif accept_language == "ru":
+                return obj.title_ru
+        return obj.title_en
+
+    def get_description(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.description_uz
+            elif accept_language == "ru":
+                return obj.description_ru
+        return obj.description_en
