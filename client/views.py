@@ -360,3 +360,27 @@ class PhotoGalleryDetail(generics.RetrieveUpdateDestroyAPIView):
         context = super().get_serializer_context()
         context["request"] = self.request
         return context
+
+
+class PhotoGalleryDetailByTitle(generics.RetrieveAPIView):
+    serializer_class = PhotoGallerySerializer
+
+    def get_object(self):
+        title = self.kwargs.get("title")
+        title = unquote(title).replace("-", " ").replace("~", "-").lower()
+        request = self.request
+        accept_language = request.headers.get("Accept-Language", "en")
+
+        if accept_language == "uz":
+            title_field = "title_uz"
+        elif accept_language == "ru":
+            title_field = "title_ru"
+        else:
+            title_field = "title_en"
+
+        filter_kwargs = {f"{title_field}__iexact": title}
+
+        try:
+            return PhotoGallery.objects.get(**filter_kwargs)
+        except PhotoGallery.DoesNotExist:
+            raise NotFound("Photo gallery item not found")

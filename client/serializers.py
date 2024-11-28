@@ -299,6 +299,7 @@ class PhotoGalleryCategorySerializer(serializers.ModelSerializer):
 
 class PhotoGallerySerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
+    slug = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
     category = PhotoGalleryCategorySerializer(read_only=True)
     images = PhotoGalleryImageSerializer(many=True, read_only=True)
@@ -309,6 +310,7 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
+            "slug",
             "description",
             "category",
             "address_uz",
@@ -348,3 +350,13 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
             elif accept_language == "ru":
                 return obj.address_ru
         return obj.address_en
+
+    def get_slug(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.title_uz.lower().replace("-", "~").replace(" ", "-")
+            elif accept_language == "ru":
+                return obj.title_ru.lower().replace("-", "~").replace(" ", "-")
+        return obj.title_en.lower().replace("-", "~").replace(" ", "-")

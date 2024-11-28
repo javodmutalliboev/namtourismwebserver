@@ -378,7 +378,7 @@ class PhotoGallery(models.Model):
     video_i_frame = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.title_en or self.title_uz or self.title_ru
+        return self.title_uz
 
     class Meta:
         verbose_name = "Fotogalereya"

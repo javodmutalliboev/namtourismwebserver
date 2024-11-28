@@ -75,8 +75,8 @@ urlpatterns = [
     ),
     path("api/photo-gallery/", PhotoGalleryList.as_view(), name="photo-gallery-list"),
     path(
-        "api/photo-gallery/<int:pk>/",
+        "api/photo-gallery/<str:title>/",
         PhotoGalleryDetail.as_view(),
-        name="photo-gallery-detail",
+        name="photo-gallery-detail-by-title",
     ),
 ]
