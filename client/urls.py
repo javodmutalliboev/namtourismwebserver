@@ -79,7 +79,9 @@ urlpatterns = [
         AboutUsImageDetailByFilename.as_view(),
         name="about-us-image-detail-by-filename",
     ),
-    path("api/photo-gallery/", PhotoGalleryList.as_view(), name="photo-gallery-list"),
+    path(
+        "api/photo-gallery-list/", PhotoGalleryList.as_view(), name="photo-gallery-list"
+    ),
     path(
         "api/photo-gallery/<str:title>/",
         PhotoGalleryDetailByTitle.as_view(),
