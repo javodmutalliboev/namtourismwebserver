@@ -193,6 +193,7 @@ class FestivalSerializer(serializers.ModelSerializer):
 
 class SocialMediaSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
+    icon = serializers.SerializerMethodField()
 
     class Meta:
         model = SocialMedia
@@ -207,3 +208,6 @@ class SocialMediaSerializer(serializers.ModelSerializer):
             elif accept_language == "ru":
                 return obj.name_ru
         return obj.name_en
+
+    def get_icon(self, obj):
+        return os.path.basename(obj.icon.name)

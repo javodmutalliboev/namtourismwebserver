@@ -239,6 +239,7 @@ class NewsListByCategoryName(generics.ListAPIView):
 class SocialMediaList(generics.ListCreateAPIView):
     queryset = SocialMedia.objects.all()
     serializer_class = SocialMediaSerializer
+    pagination_class = None
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
