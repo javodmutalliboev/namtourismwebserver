@@ -415,6 +415,8 @@ class FestivalPosterSerializer(serializers.ModelSerializer):
 
 
 class ContactSerializer(serializers.ModelSerializer):
+    address = serializers.SerializerMethodField()
+
     class Meta:
         model = Contact
         fields = [
@@ -426,3 +428,13 @@ class ContactSerializer(serializers.ModelSerializer):
             "postal_index",
             "email",
         ]
+
+    def get_address(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.address_uz
+            elif accept_language == "ru":
+                return obj.address_ru
+        return obj.address_en

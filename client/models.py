@@ -494,7 +494,9 @@ def delete_festival_poster_video_file(sender, instance, **kwargs):
 class Contact(models.Model):
     phone = models.CharField(max_length=20)
     additional_phone = models.CharField(max_length=20, blank=True, null=True)
-    address = models.CharField(max_length=255)
+    address_uz = models.CharField(max_length=255, blank=True, null=True)
+    address_ru = models.CharField(max_length=255, blank=True, null=True)
+    address_en = models.CharField(max_length=255, blank=True, null=True)
     location_i_frame = models.TextField(blank=True, null=True)
     postal_index = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField()
