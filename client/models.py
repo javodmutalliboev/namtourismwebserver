@@ -344,6 +344,19 @@ def delete_about_us_image_file(sender, instance, **kwargs):
             os.remove(instance.image.path)
 
 
+class PhotoGalleryCategory(models.Model):
+    name_uz = models.CharField(max_length=100, blank=True, null=True)
+    name_en = models.CharField(max_length=100, blank=True, null=True)
+    name_ru = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.name_uz
+
+    class Meta:
+        verbose_name = "Fotogalereya kategoriyasi"
+        verbose_name_plural = "Fotogalereya kategoriyalari"
+
+
 class PhotoGallery(models.Model):
     title_uz = models.CharField(max_length=200, blank=True, null=True)
     title_en = models.CharField(max_length=200, blank=True, null=True)
@@ -351,7 +364,9 @@ class PhotoGallery(models.Model):
     description_uz = models.TextField(blank=True, null=True)
     description_en = models.TextField(blank=True, null=True)
     description_ru = models.TextField(blank=True, null=True)
-    category = models.CharField(max_length=100)
+    category = models.ForeignKey(
+        PhotoGalleryCategory, related_name="photo_galleries", on_delete=models.CASCADE
+    )
     address_uz = models.CharField(max_length=255, blank=True, null=True)
     address_en = models.CharField(max_length=255, blank=True, null=True)
     address_ru = models.CharField(max_length=255, blank=True, null=True)
@@ -378,3 +393,11 @@ class PhotoGalleryImage(models.Model):
     class Meta:
         verbose_name = "Fotogalereya Rasm"
         verbose_name_plural = "Fotogalereya Rasmlar"
+
+
+@receiver(post_delete, sender=PhotoGalleryImage)
+def delete_photo_gallery_image_file(sender, instance, **kwargs):
+    # Delete the image file when the photo gallery image object is deleted
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)

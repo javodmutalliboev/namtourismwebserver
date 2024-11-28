@@ -11,6 +11,7 @@ from .models import (
     AboutUs,
     PhotoGallery,
     PhotoGalleryImage,
+    PhotoGalleryCategory,
 )
 import os
 
@@ -271,9 +272,16 @@ class PhotoGalleryImageSerializer(serializers.ModelSerializer):
         fields = ["image"]
 
 
+class PhotoGalleryCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PhotoGalleryCategory
+        fields = ["id", "name_uz", "name_en", "name_ru"]
+
+
 class PhotoGallerySerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
+    category = PhotoGalleryCategorySerializer(read_only=True)
     images = PhotoGalleryImageSerializer(many=True, read_only=True)
 
     class Meta:
@@ -283,7 +291,9 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
             "title",
             "description",
             "category",
-            "address",
+            "address_uz",
+            "address_en",
+            "address_ru",
             "location_i_frame",
             "video_i_frame",
             "images",
