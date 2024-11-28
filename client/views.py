@@ -468,3 +468,27 @@ class FestivalPosterDetail(generics.RetrieveUpdateDestroyAPIView):
         context = super().get_serializer_context()
         context["request"] = self.request
         return context
+
+
+class FestivalPosterDetailByTitle(generics.RetrieveAPIView):
+    serializer_class = FestivalPosterSerializer
+
+    def get_object(self):
+        title = self.kwargs.get("title")
+        title = unquote(title).replace("-", " ").replace("~", "-").lower()
+        request = self.request
+        accept_language = request.headers.get("Accept-Language", "en")
+
+        if accept_language == "uz":
+            title_field = "title_uz"
+        elif accept_language == "ru":
+            title_field = "title_ru"
+        else:
+            title_field = "title_en"
+
+        filter_kwargs = {f"{title_field}__iexact": title}
+
+        try:
+            return FestivalPoster.objects.get(**filter_kwargs)
+        except FestivalPoster.DoesNotExist:
+            raise NotFound("Festival poster item not found")

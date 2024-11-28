@@ -366,10 +366,11 @@ class FestivalPosterSerializer(serializers.ModelSerializer):
     description = serializers.SerializerMethodField()
     logo = serializers.SerializerMethodField()
     video = serializers.SerializerMethodField()
+    slug = serializers.SerializerMethodField()
 
     class Meta:
         model = FestivalPoster
-        fields = ["id", "title", "description", "logo", "video"]
+        fields = ["id", "title", "slug", "description", "logo", "video"]
 
     def get_title(self, obj):
         request = self.context.get("request")
@@ -380,6 +381,16 @@ class FestivalPosterSerializer(serializers.ModelSerializer):
             elif accept_language == "ru":
                 return obj.title_ru
         return obj.title_en
+
+    def get_slug(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.title_uz.lower().replace("-", "~").replace(" ", "-")
+            elif accept_language == "ru":
+                return obj.title_ru.lower().replace("-", "~").replace(" ", "-")
+        return obj.title_en.lower().replace("-", "~").replace(" ", "-")
 
     def get_description(self, obj):
         request = self.context.get("request")
