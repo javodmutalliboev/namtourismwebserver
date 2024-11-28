@@ -284,3 +284,19 @@ class SponsorDetail(generics.RetrieveUpdateDestroyAPIView):
         context = super().get_serializer_context()
         context["request"] = self.request
         return context
+
+
+class SponsorLogoDetail(View):
+    def get(self, request, filename):
+        filename = unquote(filename)
+        try:
+            # Iterate through all Sponsor objects and match the filename
+            for sponsor in Sponsor.objects.all():
+                if os.path.basename(sponsor.logo.name) == filename:
+                    image_path = sponsor.logo.path
+                    return FileResponse(
+                        open(image_path, "rb"), content_type="image/jpeg"
+                    )
+            raise Http404("Logo not found")
+        except Sponsor.DoesNotExist:
+            raise Http404("Sponsor not found")

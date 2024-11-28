@@ -13,6 +13,7 @@ from .views import (
     NewsListByCategoryName,
     SocialMediaList,
     SponsorList,
+    SponsorLogoDetail,
 )
 
 urlpatterns = [
@@ -57,4 +58,9 @@ urlpatterns = [
     ),
     path("api/social-media/", SocialMediaList.as_view(), name="social-media-list"),
     path("api/sponsors/", SponsorList.as_view(), name="sponsor-list"),
+    path(
+        "api/sponsors/logo/<str:filename>/",
+        SponsorLogoDetail.as_view(),
+        name="sponsor-logo-detail",
+    ),
 ]
