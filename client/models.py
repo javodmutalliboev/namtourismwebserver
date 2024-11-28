@@ -251,14 +251,12 @@ def delete_social_media_icon_file(sender, instance, **kwargs):
 
 
 class Sponsor(models.Model):
-    name_uz = models.CharField(max_length=100, blank=True, null=True)
-    name_en = models.CharField(max_length=100, blank=True, null=True)
-    name_ru = models.CharField(max_length=100, blank=True, null=True)
+    name = models.CharField(max_length=100, blank=True, null=True)
     url = models.URLField(blank=True, null=True)
     logo = models.ImageField(upload_to=sponsor_logo_upload_path, blank=True, null=True)
 
     def __str__(self):
-        return self.name_uz  # Default to Uzbek name for display
+        return self.name or "" 
 
     class Meta:
         verbose_name = "Homiy"

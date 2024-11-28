@@ -217,22 +217,11 @@ class SocialMediaSerializer(serializers.ModelSerializer):
 
 
 class SponsorSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
     logo = serializers.SerializerMethodField()
 
     class Meta:
         model = Sponsor
         fields = ["id", "name", "url", "logo"]
-
-    def get_name(self, obj):
-        request = self.context.get("request")
-        if request:
-            accept_language = request.headers.get("Accept-Language", "en")
-            if accept_language == "uz":
-                return obj.name_uz
-            elif accept_language == "ru":
-                return obj.name_ru
-        return obj.name_en
 
     def get_logo(self, obj):
         return os.path.basename(obj.logo.name)
