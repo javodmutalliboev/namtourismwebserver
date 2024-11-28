@@ -186,21 +186,21 @@ class FestivalList(generics.ListCreateAPIView):
         accept_language = self.request.headers.get("Accept-Language", "en")
 
         if accept_language == "uz":
-            title_field = "title_uz"
+            name_field = "name_uz"
             description_field = "description_uz"
             address_field = "address_uz"
         elif accept_language == "ru":
-            title_field = "title_ru"
+            name_field = "name_ru"
             description_field = "description_ru"
             address_field = "address_ru"
         else:
-            title_field = "title_en"
+            name_field = "name_en"
             description_field = "description_en"
             address_field = "address_en"
 
         if search:
             queryset = queryset.filter(
-                Q(**{f"{title_field}__icontains": search})
+                Q(**{f"{name_field}__icontains": search})
                 | Q(**{f"{description_field}__icontains": search})
                 | Q(**{f"{address_field}__icontains": search})
             )
