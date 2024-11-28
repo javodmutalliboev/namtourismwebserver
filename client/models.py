@@ -19,6 +19,13 @@ def festival_image_upload_path(instance, filename):
     return os.path.join("festivals", filename)
 
 
+def social_media_icon_upload_path(instance, filename):
+    # Generate the filename with the current time including milliseconds
+    current_time = datetime.now().strftime("%Y%m%d%H%M%S%f")
+    filename = f"{current_time}_{filename}"
+    return os.path.join("social_media_icons", filename)
+
+
 class NewsCategory(models.Model):
     name_uz = models.CharField(max_length=100, blank=True, null=True)
     name_en = models.CharField(max_length=100, blank=True, null=True)
@@ -193,13 +200,41 @@ def delete_news_image_file(sender, instance, **kwargs):
 
 
 class SocialMedia(models.Model):
-    name = models.CharField(max_length=100)
+    name_uz = models.CharField(max_length=100, blank=True, null=True)
+    name_en = models.CharField(max_length=100, blank=True, null=True)
+    name_ru = models.CharField(max_length=100, blank=True, null=True)
     url = models.URLField()
-    icon = models.ImageField(upload_to="social_media_icons/", blank=True, null=True)
+    icon = models.ImageField(
+        upload_to=social_media_icon_upload_path, blank=True, null=True
+    )
 
     def __str__(self):
-        return self.name
+        return self.name_uz  # Default to Uzbek name for display
 
     class Meta:
-        verbose_name = "Social Media"
-        verbose_name_plural = "Social Media"
+        verbose_name = "Ijtimoiy tarmoq"
+        verbose_name_plural = "Ijtimoiy tarmoqlar"
+
+
+@receiver(pre_save, sender=SocialMedia)
+def delete_old_icon_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+
+    try:
+        old_icon = SocialMedia.objects.get(pk=instance.pk).icon
+    except SocialMedia.DoesNotExist:
+        return False
+
+    new_icon = instance.icon
+    if old_icon and old_icon != new_icon:
+        if os.path.isfile(old_icon.path):
+            os.remove(old_icon.path)
+
+
+@receiver(post_delete, sender=SocialMedia)
+def delete_social_media_icon_file(sender, instance, **kwargs):
+    # Delete the icon file when the social media object is deleted
+    if instance.icon:
+        if os.path.isfile(instance.icon.path):
+            os.remove(instance.icon.path)
