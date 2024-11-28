@@ -26,6 +26,13 @@ def social_media_icon_upload_path(instance, filename):
     return os.path.join("social_media_icons", filename)
 
 
+def sponsor_logo_upload_path(instance, filename):
+    # Generate the filename with the current time including milliseconds
+    current_time = datetime.now().strftime("%Y%m%d%H%M%S%f")
+    filename = f"{current_time}_{filename}"
+    return os.path.join("sponsors", filename)
+
+
 class NewsCategory(models.Model):
     name_uz = models.CharField(max_length=100, blank=True, null=True)
     name_en = models.CharField(max_length=100, blank=True, null=True)
@@ -241,3 +248,42 @@ def delete_social_media_icon_file(sender, instance, **kwargs):
         if os.path.isfile(instance.icon.path):
             os.remove(instance.icon.path)
 """
+
+
+class Sponsor(models.Model):
+    name_uz = models.CharField(max_length=100, blank=True, null=True)
+    name_en = models.CharField(max_length=100, blank=True, null=True)
+    name_ru = models.CharField(max_length=100, blank=True, null=True)
+    url = models.URLField(blank=True, null=True)
+    logo = models.ImageField(upload_to=sponsor_logo_upload_path, blank=True, null=True)
+
+    def __str__(self):
+        return self.name_uz  # Default to Uzbek name for display
+
+    class Meta:
+        verbose_name = "Homiy"
+        verbose_name_plural = "Homiylar"
+
+
+@receiver(pre_save, sender=Sponsor)
+def delete_old_logo_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+
+    try:
+        old_logo = Sponsor.objects.get(pk=instance.pk).logo
+    except Sponsor.DoesNotExist:
+        return False
+
+    new_logo = instance.logo
+    if old_logo and old_logo != new_logo:
+        if os.path.isfile(old_logo.path):
+            os.remove(old_logo.path)
+
+
+@receiver(post_delete, sender=Sponsor)
+def delete_sponsor_logo_file(sender, instance, **kwargs):
+    # Delete the logo file when the sponsor object is deleted
+    if instance.logo:
+        if os.path.isfile(instance.logo.path):
+            os.remove(instance.logo.path)

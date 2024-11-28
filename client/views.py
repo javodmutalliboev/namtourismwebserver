@@ -3,13 +3,22 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
-from .models import News, NewsImage, Festival, FestivalImage, NewsCategory, SocialMedia
+from .models import (
+    News,
+    NewsImage,
+    Festival,
+    FestivalImage,
+    NewsCategory,
+    SocialMedia,
+    Sponsor,
+)
 from .serializers import (
     NewsSerializer,
     NewsImageSerializer,
     FestivalSerializer,
     NewsCategorySerializer,
     SocialMediaSerializer,
+    SponsorSerializer,
 )
 from .pagination import CustomPagination
 from urllib.parse import unquote
@@ -250,6 +259,26 @@ class SocialMediaList(generics.ListCreateAPIView):
 class SocialMediaDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = SocialMedia.objects.all()
     serializer_class = SocialMediaSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
+
+class SponsorList(generics.ListCreateAPIView):
+    queryset = Sponsor.objects.all()
+    serializer_class = SponsorSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
+
+class SponsorDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Sponsor.objects.all()
+    serializer_class = SponsorSerializer
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
