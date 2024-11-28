@@ -267,15 +267,34 @@ class AboutUsSerializer(serializers.ModelSerializer):
 
 
 class PhotoGalleryImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = PhotoGalleryImage
         fields = ["image"]
 
+    def get_image(self, obj):
+        if obj.image:
+            return os.path.basename(obj.image.name)
+        return None
+
 
 class PhotoGalleryCategorySerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
     class Meta:
         model = PhotoGalleryCategory
-        fields = ["id", "name_uz", "name_en", "name_ru"]
+        fields = ["id", "name"]
+
+    def get_name(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.name_uz
+            elif accept_language == "ru":
+                return obj.name_ru
+        return obj.name_en
 
 
 class PhotoGallerySerializer(serializers.ModelSerializer):
@@ -283,6 +302,7 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
     description = serializers.SerializerMethodField()
     category = PhotoGalleryCategorySerializer(read_only=True)
     images = PhotoGalleryImageSerializer(many=True, read_only=True)
+    address = serializers.SerializerMethodField()
 
     class Meta:
         model = PhotoGallery
@@ -318,3 +338,13 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
             elif accept_language == "ru":
                 return obj.description_ru
         return obj.description_en
+
+    def get_address(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.address_uz
+            elif accept_language == "ru":
+                return obj.address_ru
+        return obj.address_en

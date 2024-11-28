@@ -11,6 +11,7 @@ from .models import (
     AboutUs,
     PhotoGallery,
     PhotoGalleryImage,
+    PhotoGalleryCategory,
 )
 
 
@@ -50,6 +51,7 @@ admin.site.register(SocialMedia)
 admin.site.register(Sponsor)
 admin.site.register(AboutUs)
 admin.site.register(PhotoGallery, PhotoGalleryAdmin)
+admin.site.register(PhotoGalleryCategory)
 
 
 admin.site.site_header = "Nam Tourism"

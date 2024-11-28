@@ -365,7 +365,11 @@ class PhotoGallery(models.Model):
     description_en = models.TextField(blank=True, null=True)
     description_ru = models.TextField(blank=True, null=True)
     category = models.ForeignKey(
-        PhotoGalleryCategory, related_name="photo_galleries", on_delete=models.CASCADE
+        PhotoGalleryCategory,
+        related_name="photo_galleries",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
     address_uz = models.CharField(max_length=255, blank=True, null=True)
     address_en = models.CharField(max_length=255, blank=True, null=True)
