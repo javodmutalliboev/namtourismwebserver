@@ -323,3 +323,19 @@ class AboutUsDetail(generics.RetrieveUpdateDestroyAPIView):
         context = super().get_serializer_context()
         context["request"] = self.request
         return context
+
+
+class AboutUsImageDetailByFilename(View):
+    def get(self, request, filename):
+        filename = unquote(filename)
+        try:
+            # Iterate through all AboutUs objects and match the filename
+            for about_us in AboutUs.objects.all():
+                if os.path.basename(about_us.image.name) == filename:
+                    image_path = about_us.image.path
+                    return FileResponse(
+                        open(image_path, "rb"), content_type="image/jpeg"
+                    )
+            raise Http404("Image not found")
+        except AboutUs.DoesNotExist:
+            raise Http404("About Us item not found")
