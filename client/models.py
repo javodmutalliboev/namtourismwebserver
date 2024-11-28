@@ -335,3 +335,23 @@ def delete_about_us_image_file(sender, instance, **kwargs):
     if instance.image:
         if os.path.isfile(instance.image.path):
             os.remove(instance.image.path)
+
+
+class PhotoGallery(models.Model):
+    title_uz = models.CharField(max_length=200, blank=True, null=True)
+    title_en = models.CharField(max_length=200, blank=True, null=True)
+    title_ru = models.CharField(max_length=200, blank=True, null=True)
+    description_uz = models.TextField(blank=True, null=True)
+    description_en = models.TextField(blank=True, null=True)
+    description_ru = models.TextField(blank=True, null=True)
+    category = models.CharField(max_length=100)
+    address = models.CharField(max_length=255, blank=True, null=True)
+    location_i_frame = models.TextField(blank=True, null=True)
+    video_i_frame = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.title_en or self.title_uz or self.title_ru
+
+    class Meta:
+        verbose_name = "Photo Gallery"
+        verbose_name_plural = "Photo Galleries"

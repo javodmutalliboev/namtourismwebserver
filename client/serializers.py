@@ -9,6 +9,7 @@ from .models import (
     SocialMedia,
     Sponsor,
     AboutUs,
+    PhotoGallery,
 )
 import os
 
@@ -261,3 +262,40 @@ class AboutUsSerializer(serializers.ModelSerializer):
         if obj.image:
             return os.path.basename(obj.image.name)
         return None
+
+
+class PhotoGallerySerializer(serializers.ModelSerializer):
+    title = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PhotoGallery
+        fields = [
+            "id",
+            "title",
+            "description",
+            "category",
+            "address",
+            "location_i_frame",
+            "video_i_frame",
+        ]
+
+    def get_title(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.title_uz
+            elif accept_language == "ru":
+                return obj.title_ru
+        return obj.title_en
+
+    def get_description(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.description_uz
+            elif accept_language == "ru":
+                return obj.description_ru
+        return obj.description_en

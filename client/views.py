@@ -12,6 +12,7 @@ from .models import (
     SocialMedia,
     Sponsor,
     AboutUs,
+    PhotoGallery,
 )
 from .serializers import (
     NewsSerializer,
@@ -21,6 +22,7 @@ from .serializers import (
     SocialMediaSerializer,
     SponsorSerializer,
     AboutUsSerializer,
+    PhotoGallerySerializer,
 )
 from .pagination import CustomPagination
 from urllib.parse import unquote
@@ -339,3 +341,23 @@ class AboutUsImageDetailByFilename(View):
             raise Http404("Image not found")
         except AboutUs.DoesNotExist:
             raise Http404("About Us item not found")
+
+
+class PhotoGalleryList(generics.ListCreateAPIView):
+    queryset = PhotoGallery.objects.all()
+    serializer_class = PhotoGallerySerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
+
+class PhotoGalleryDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = PhotoGallery.objects.all()
+    serializer_class = PhotoGallerySerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context

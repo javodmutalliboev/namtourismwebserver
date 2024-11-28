@@ -16,6 +16,8 @@ from .views import (
     SponsorLogoDetail,
     AboutUsList,
     AboutUsImageDetailByFilename,
+    PhotoGalleryList,
+    PhotoGalleryDetail,
 )
 
 urlpatterns = [
@@ -70,5 +72,11 @@ urlpatterns = [
         "api/about-us/image/<str:filename>/",
         AboutUsImageDetailByFilename.as_view(),
         name="about-us-image-detail-by-filename",
+    ),
+    path("api/photo-gallery/", PhotoGalleryList.as_view(), name="photo-gallery-list"),
+    path(
+        "api/photo-gallery/<int:pk>/",
+        PhotoGalleryDetail.as_view(),
+        name="photo-gallery-detail",
     ),
 ]
