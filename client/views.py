@@ -177,12 +177,12 @@ class FestivalBannerImage(View):
 
 
 class FestivalList(generics.ListCreateAPIView):
-    queryset = Festival.objects.all()
+    queryset = Festival.objects.all().order_by("start_date")
     serializer_class = FestivalSerializer
     pagination_class = CustomPagination
 
     def get_queryset(self):
-        queryset = Festival.objects.all()
+        queryset = Festival.objects.all().order_by("start_date")
         search = self.request.query_params.get("search", None)
         category_name = self.request.query_params.get("category", None)
         accept_language = self.request.headers.get("Accept-Language", "en")
