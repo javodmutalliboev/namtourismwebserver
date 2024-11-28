@@ -188,27 +188,26 @@ class FestivalList(generics.ListCreateAPIView):
         if accept_language == "uz":
             title_field = "title_uz"
             description_field = "description_uz"
-            category_field = "name_uz"
+            address_field = "address_uz"
         elif accept_language == "ru":
             title_field = "title_ru"
             description_field = "description_ru"
-            category_field = "name_ru"
+            address_field = "address_ru"
         else:
             title_field = "title_en"
             description_field = "description_en"
-            category_field = "name_en"
+            address_field = "address_en"
 
         if search:
             queryset = queryset.filter(
                 Q(**{f"{title_field}__icontains": search})
                 | Q(**{f"{description_field}__icontains": search})
+                | Q(**{f"{address_field}__icontains": search})
             )
 
         if category_name:
             try:
-                category = FestivalCategory.objects.get(
-                    **{f"{category_field}__iexact": category_name}
-                )
+                category = FestivalCategory.objects.get(name__iexact=category_name)
                 queryset = queryset.filter(category=category)
             except FestivalCategory.DoesNotExist:
                 queryset = queryset.none()
