@@ -508,3 +508,19 @@ class FestivalPosterLogoDetail(View):
             raise Http404("Logo not found")
         except FestivalPoster.DoesNotExist:
             raise Http404("Festival poster not found")
+
+
+class FestivalPosterVideoDetail(View):
+    def get(self, request, filename):
+        filename = unquote(filename)
+        try:
+            # Iterate through all FestivalPoster objects and match the filename
+            for festival_poster in FestivalPoster.objects.all():
+                if os.path.basename(festival_poster.video.name) == filename:
+                    video_path = festival_poster.video.path
+                    return FileResponse(
+                        open(video_path, "rb"), content_type="video/mp4"
+                    )
+            raise Http404("Video not found")
+        except FestivalPoster.DoesNotExist:
+            raise Http404("Festival poster not found")
