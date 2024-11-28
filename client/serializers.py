@@ -6,6 +6,7 @@ from .models import (
     Festival,
     FestivalCategory,
     FestivalImage,
+    SocialMedia,
 )
 import os
 
@@ -188,3 +189,9 @@ class FestivalSerializer(serializers.ModelSerializer):
         if obj.banner:
             return os.path.basename(obj.banner.name)
         return None
+
+
+class SocialMediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SocialMedia
+        fields = ["id", "name", "url", "icon"]

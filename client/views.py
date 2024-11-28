@@ -3,12 +3,13 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
-from .models import News, NewsImage, Festival, FestivalImage, NewsCategory
+from .models import News, NewsImage, Festival, FestivalImage, NewsCategory, SocialMedia
 from .serializers import (
     NewsSerializer,
     NewsImageSerializer,
     FestivalSerializer,
     NewsCategorySerializer,
+    SocialMediaSerializer,
 )
 from .pagination import CustomPagination
 from urllib.parse import unquote
@@ -233,3 +234,13 @@ class NewsListByCategoryName(generics.ListAPIView):
             raise NotFound("News category not found")
 
         return News.objects.filter(category=category)
+
+
+class SocialMediaList(generics.ListCreateAPIView):
+    queryset = SocialMedia.objects.all()
+    serializer_class = SocialMediaSerializer
+
+
+class SocialMediaDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SocialMedia.objects.all()
+    serializer_class = SocialMediaSerializer

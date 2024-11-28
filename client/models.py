@@ -190,3 +190,16 @@ def delete_news_image_file(sender, instance, **kwargs):
     if instance.image:
         if os.path.isfile(instance.image.path):
             os.remove(instance.image.path)
+
+
+class SocialMedia(models.Model):
+    name = models.CharField(max_length=100)
+    url = models.URLField()
+    icon = models.ImageField(upload_to="social_media_icons/", blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Social Media"
+        verbose_name_plural = "Social Media"

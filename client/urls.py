@@ -11,6 +11,8 @@ from .views import (
     FestivalImageDetailByFilename,
     NewsCategoryList,
     NewsListByCategoryName,
+    SocialMediaList,
+    SocialMediaDetail,
 )
 
 urlpatterns = [
@@ -52,5 +54,11 @@ urlpatterns = [
         "api/news/category/<str:category_name>/",
         NewsListByCategoryName.as_view(),
         name="news-list-by-category-name",
+    ),
+    path("api/social-media/", SocialMediaList.as_view(), name="social-media-list"),
+    path(
+        "api/social-media/<int:pk>/",
+        SocialMediaDetail.as_view(),
+        name="social-media-detail",
     ),
 ]

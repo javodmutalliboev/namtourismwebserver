@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import News, NewsImage, NewsCategory, Festival, FestivalImage
+from .models import News, NewsImage, NewsCategory, Festival, FestivalImage, SocialMedia
 
 
 class NewsImageInline(admin.TabularInline):
@@ -26,6 +26,7 @@ class NewsAdmin(admin.ModelAdmin):
 
 admin.site.register(NewsCategory)
 admin.site.register(News, NewsAdmin)
+admin.site.register(SocialMedia)
 
 
 admin.site.site_header = "Nam Tourism"
