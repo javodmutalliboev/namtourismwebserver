@@ -19,6 +19,7 @@ from .views import (
     PhotoGalleryList,
     PhotoGalleryDetailByTitle,
     PhotoGalleryImageDetailByFilename,
+    PhotoGalleryCategoryList,
 )
 
 urlpatterns = [
@@ -84,5 +85,10 @@ urlpatterns = [
         "api/photo-gallery/image/<str:filename>/",
         PhotoGalleryImageDetailByFilename.as_view(),
         name="photo-gallery-image-detail-by-filename",
+    ),
+    path(
+        "api/photo-gallery-categories/",
+        PhotoGalleryCategoryList.as_view(),
+        name="photo-gallery-category-list",
     ),
 ]

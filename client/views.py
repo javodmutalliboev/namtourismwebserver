@@ -15,6 +15,7 @@ from .models import (
     PhotoGallery,
     PhotoGalleryImage,
     FestivalCategory,
+    PhotoGalleryCategory,
 )
 from .serializers import (
     NewsSerializer,
@@ -24,6 +25,7 @@ from .serializers import (
     SponsorSerializer,
     AboutUsSerializer,
     PhotoGallerySerializer,
+    PhotoGalleryCategorySerializer,
 )
 from .pagination import CustomPagination
 from urllib.parse import unquote
@@ -437,3 +439,9 @@ class PhotoGalleryImageDetailByFilename(View):
             raise Http404("Image not found")
         except PhotoGalleryImage.DoesNotExist:
             raise Http404("Photo gallery image not found")
+
+
+class PhotoGalleryCategoryList(generics.ListAPIView):
+    queryset = PhotoGalleryCategory.objects.all()
+    serializer_class = PhotoGalleryCategorySerializer
+    pagination_class = None
