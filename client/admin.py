@@ -10,6 +10,7 @@ from .models import (
     Sponsor,
     AboutUs,
     PhotoGallery,
+    PhotoGalleryImage,
 )
 
 
@@ -21,6 +22,15 @@ class NewsImageInline(admin.TabularInline):
 class FestivalImageInline(admin.TabularInline):
     model = FestivalImage
     extra = 1  # Number of empty forms to display
+
+
+class PhotoGalleryImageInline(admin.TabularInline):
+    model = PhotoGalleryImage
+    extra = 1  # Number of empty forms to display
+
+
+class PhotoGalleryAdmin(admin.ModelAdmin):
+    inlines = [PhotoGalleryImageInline]
 
 
 class FestivalAdmin(admin.ModelAdmin):
@@ -39,7 +49,7 @@ admin.site.register(News, NewsAdmin)
 admin.site.register(SocialMedia)
 admin.site.register(Sponsor)
 admin.site.register(AboutUs)
-admin.site.register(PhotoGallery)
+admin.site.register(PhotoGallery, PhotoGalleryAdmin)
 
 
 admin.site.site_header = "Nam Tourism"

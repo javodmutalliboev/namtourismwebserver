@@ -10,6 +10,7 @@ from .models import (
     Sponsor,
     AboutUs,
     PhotoGallery,
+    PhotoGalleryImage,
 )
 import os
 
@@ -264,9 +265,16 @@ class AboutUsSerializer(serializers.ModelSerializer):
         return None
 
 
+class PhotoGalleryImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PhotoGalleryImage
+        fields = ["image"]
+
+
 class PhotoGallerySerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
+    images = PhotoGalleryImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = PhotoGallery
@@ -278,6 +286,7 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
             "address",
             "location_i_frame",
             "video_i_frame",
+            "images",
         ]
 
     def get_title(self, obj):

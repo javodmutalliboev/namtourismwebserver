@@ -16,7 +16,6 @@ from .models import (
 )
 from .serializers import (
     NewsSerializer,
-    NewsImageSerializer,
     FestivalSerializer,
     NewsCategorySerializer,
     SocialMediaSerializer,

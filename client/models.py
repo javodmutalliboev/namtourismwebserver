@@ -40,6 +40,13 @@ def about_us_image_upload_path(instance, filename):
     return os.path.join("about_us", filename)
 
 
+def photo_gallery_image_upload_path(instance, filename):
+    # Generate the filename with the current time including milliseconds
+    current_time = datetime.now().strftime("%Y%m%d%H%M%S%f")
+    filename = f"{current_time}_{filename}"
+    return os.path.join("photo_gallery", filename)
+
+
 class NewsCategory(models.Model):
     name_uz = models.CharField(max_length=100, blank=True, null=True)
     name_en = models.CharField(max_length=100, blank=True, null=True)
@@ -345,7 +352,9 @@ class PhotoGallery(models.Model):
     description_en = models.TextField(blank=True, null=True)
     description_ru = models.TextField(blank=True, null=True)
     category = models.CharField(max_length=100)
-    address = models.CharField(max_length=255, blank=True, null=True)
+    address_uz = models.CharField(max_length=255, blank=True, null=True)
+    address_en = models.CharField(max_length=255, blank=True, null=True)
+    address_ru = models.CharField(max_length=255, blank=True, null=True)
     location_i_frame = models.TextField(blank=True, null=True)
     video_i_frame = models.TextField(blank=True, null=True)
 
@@ -353,5 +362,19 @@ class PhotoGallery(models.Model):
         return self.title_en or self.title_uz or self.title_ru
 
     class Meta:
-        verbose_name = "Photo Gallery"
-        verbose_name_plural = "Photo Galleries"
+        verbose_name = "Fotogalereya"
+        verbose_name_plural = "Fotogalereya"
+
+
+class PhotoGalleryImage(models.Model):
+    photo_gallery = models.ForeignKey(
+        PhotoGallery, related_name="images", on_delete=models.CASCADE
+    )
+    image = models.ImageField(upload_to=photo_gallery_image_upload_path)
+
+    def __str__(self):
+        return f"{self.photo_gallery.title_uz} uchun rasm"
+
+    class Meta:
+        verbose_name = "Fotogalereya Rasm"
+        verbose_name_plural = "Fotogalereya Rasmlar"
