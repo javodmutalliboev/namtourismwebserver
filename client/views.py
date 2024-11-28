@@ -13,6 +13,7 @@ from .models import (
     Sponsor,
     AboutUs,
     PhotoGallery,
+    PhotoGalleryImage,
 )
 from .serializers import (
     NewsSerializer,
@@ -384,3 +385,19 @@ class PhotoGalleryDetailByTitle(generics.RetrieveAPIView):
             return PhotoGallery.objects.get(**filter_kwargs)
         except PhotoGallery.DoesNotExist:
             raise NotFound("Photo gallery item not found")
+
+
+class PhotoGalleryImageDetailByFilename(View):
+    def get(self, request, filename):
+        filename = unquote(filename)
+        try:
+            # Iterate through all PhotoGalleryImage objects and match the filename
+            for photo_gallery_image in PhotoGalleryImage.objects.all():
+                if os.path.basename(photo_gallery_image.image.name) == filename:
+                    image_path = photo_gallery_image.image.path
+                    return FileResponse(
+                        open(image_path, "rb"), content_type="image/jpeg"
+                    )
+            raise Http404("Image not found")
+        except PhotoGalleryImage.DoesNotExist:
+            raise Http404("Photo gallery image not found")
