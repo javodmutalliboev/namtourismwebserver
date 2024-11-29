@@ -306,6 +306,7 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
     category = PhotoGalleryCategorySerializer(read_only=True)
     images = PhotoGalleryImageSerializer(many=True, read_only=True)
     address = serializers.SerializerMethodField()
+    banner = serializers.SerializerMethodField()
 
     class Meta:
         model = PhotoGallery
@@ -318,6 +319,7 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
             "address",
             "location_i_frame",
             "video_i_frame",
+            "banner",
             "images",
         ]
 
@@ -370,6 +372,11 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
             elif accept_language == "ru":
                 return obj.category.name_ru
         return obj.category.name_en
+
+    def get_banner(self, obj):
+        if obj.banner:
+            return os.path.basename(obj.banner.name)
+        return None
 
 
 class FestivalPosterSerializer(serializers.ModelSerializer):

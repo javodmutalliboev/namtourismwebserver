@@ -390,6 +390,9 @@ class PhotoGallery(models.Model):
     address_ru = models.CharField(max_length=255, blank=True, null=True)
     location_i_frame = models.TextField(blank=True, null=True)
     video_i_frame = models.TextField(blank=True, null=True)
+    banner = models.ImageField(
+        upload_to=photo_gallery_image_upload_path, blank=True, null=True
+    )
 
     def __str__(self):
         return self.title_uz
@@ -507,3 +510,27 @@ class Contact(models.Model):
     class Meta:
         verbose_name = "Bog'lanish"
         verbose_name_plural = "Bog'lanish"
+
+
+@receiver(pre_save, sender=PhotoGallery)
+def delete_old_banner_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+
+    try:
+        old_banner = PhotoGallery.objects.get(pk=instance.pk).banner
+    except PhotoGallery.DoesNotExist:
+        return False
+
+    new_banner = instance.banner
+    if old_banner and old_banner != new_banner:
+        if os.path.isfile(old_banner.path):
+            os.remove(old_banner.path)
+
+
+@receiver(post_delete, sender=PhotoGallery)
+def delete_photo_gallery_banner_file(sender, instance, **kwargs):
+    # Delete the banner file when the photo gallery object is deleted
+    if instance.banner:
+        if os.path.isfile(instance.banner.path):
+            os.remove(instance.banner.path)
