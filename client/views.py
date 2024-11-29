@@ -1,4 +1,4 @@
-from django.http import HttpResponse, FileResponse, Http404
+from django.http import HttpResponse, FileResponse, Http404, StreamingHttpResponse
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
@@ -37,6 +37,8 @@ from rest_framework.pagination import PageNumberPagination
 import os
 from django.views import View
 from django.db.models import Q
+import re
+import mimetypes
 
 
 # Create your views here.
@@ -561,12 +563,50 @@ class FestivalPosterVideoDetail(View):
             for festival_poster in FestivalPoster.objects.all():
                 if os.path.basename(festival_poster.video.name) == filename:
                     video_path = festival_poster.video.path
-                    return FileResponse(
-                        open(video_path, "rb"), content_type="video/mp4"
-                    )
+                    return self.serve_video(request, video_path)
             raise Http404("Video not found")
         except FestivalPoster.DoesNotExist:
             raise Http404("Festival poster not found")
+
+    def serve_video(self, request, path):
+        range_header = request.headers.get("Range", "").strip()
+        range_match = re.match(r"bytes=(\d+)-(\d+)?", range_header)
+        size = os.path.getsize(path)
+        content_type, _ = mimetypes.guess_type(path)
+        content_type = content_type or "application/octet-stream"
+
+        if range_match:
+            first_byte, last_byte = range_match.groups()
+            first_byte = int(first_byte)
+            last_byte = int(last_byte) if last_byte else size - 1
+            length = last_byte - first_byte + 1
+            response = StreamingHttpResponse(
+                self.file_iterator(path, offset=first_byte, length=length),
+                status=206,
+                content_type=content_type,
+            )
+            response["Content-Range"] = f"bytes {first_byte}-{last_byte}/{size}"
+        else:
+            response = StreamingHttpResponse(
+                self.file_iterator(path), content_type=content_type
+            )
+            response["Content-Length"] = size
+
+        response["Accept-Ranges"] = "bytes"
+        return response
+
+    def file_iterator(self, path, offset=0, length=None, chunk_size=8192):
+        with open(path, "rb") as f:
+            f.seek(offset, os.SEEK_SET)
+            remaining = length
+            while remaining is None or remaining > 0:
+                chunk_size = min(chunk_size, remaining) if remaining else chunk_size
+                data = f.read(chunk_size)
+                if not data:
+                    break
+                if remaining:
+                    remaining -= len(data)
+                yield data
 
 
 class ContactList(generics.ListCreateAPIView):
