@@ -400,14 +400,17 @@ class PhotoGalleryList(generics.ListCreateAPIView):
             title_field = "title_uz"
             description_field = "description_uz"
             address_field = "address_uz"
+            category_field = "name_uz"
         elif accept_language == "ru":
             title_field = "title_ru"
             description_field = "description_ru"
             address_field = "address_ru"
+            category_field = "name_ru"
         else:
             title_field = "title_en"
             description_field = "description_en"
             address_field = "address_en"
+            category_field = "name_en"
 
         if search:
             queryset = queryset.filter(
@@ -418,7 +421,9 @@ class PhotoGalleryList(generics.ListCreateAPIView):
 
         if category_name:
             try:
-                category = PhotoGalleryCategory.objects.get(name__iexact=category_name)
+                category = PhotoGalleryCategory.objects.get(
+                    **{f"{category_field}__iexact": category_name}
+                )
                 queryset = queryset.filter(category=category)
             except PhotoGalleryCategory.DoesNotExist:
                 queryset = queryset.none()

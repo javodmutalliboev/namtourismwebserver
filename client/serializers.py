@@ -361,6 +361,16 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
                 return obj.title_ru.lower().replace("-", "~").replace(" ", "-")
         return obj.title_en.lower().replace("-", "~").replace(" ", "-")
 
+    def get_category(self, obj):
+        request = self.context.get("request")
+        if request:
+            accept_language = request.headers.get("Accept-Language", "en")
+            if accept_language == "uz":
+                return obj.category.name_uz
+            elif accept_language == "ru":
+                return obj.category.name_ru
+        return obj.category.name_en
+
 
 class FestivalPosterSerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
