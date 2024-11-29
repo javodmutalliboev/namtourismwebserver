@@ -588,3 +588,19 @@ class ContactDetail(generics.RetrieveUpdateDestroyAPIView):
         context = super().get_serializer_context()
         context["request"] = self.request
         return context
+
+
+class PhotoGalleryBannerImageDetail(View):
+    def get(self, request, filename):
+        filename = unquote(filename)
+        try:
+            # Iterate through all PhotoGallery objects and match the filename
+            for photo_gallery in PhotoGallery.objects.all():
+                if os.path.basename(photo_gallery.banner.name) == filename:
+                    image_path = photo_gallery.banner.path
+                    return FileResponse(
+                        open(image_path, "rb"), content_type="image/jpeg"
+                    )
+            raise Http404("Banner image not found")
+        except PhotoGallery.DoesNotExist:
+            raise Http404("Photo gallery not found")
