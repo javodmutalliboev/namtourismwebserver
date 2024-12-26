@@ -31,16 +31,18 @@ SECRET_KEY = "django-insecure-3_kwk8jjq=4=2ssa7(m(rx10(fz-orzt$7$=z@)=*yvj9mx38r
 DEBUG = True
 
 # Allow all origins (not recommended for production)
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 
 # Alternatively, specify allowed origins
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://127.0.0.1:3000",
-#     "https://your-production-domain.com",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://namturapi.fazo-software.uz/",
+]
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "https://namturapi.fazo-software.uz/"
+]
 
 APPEND_SLASH = True
 
