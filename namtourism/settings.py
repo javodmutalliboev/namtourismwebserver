@@ -41,7 +41,9 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 ALLOWED_HOSTS = [
-    "https://namturapi.fazo-software.uz"
+    "https://namturapi.fazo-software.uz",
+    "localhost",
+    "127.0.0.1"
 ]
 
 APPEND_SLASH = True
