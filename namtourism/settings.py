@@ -39,9 +39,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "https://namturapi.fazo-software.uz",
 ]
-
-ALLOWED_HOSTS = [
+CSRF_TRUSTED_ORIGINS = [
     "https://namturapi.fazo-software.uz",
+]
+ALLOWED_HOSTS = [
+    "namturapi.fazo-software.uz",
     "localhost",
     "127.0.0.1"
 ]
