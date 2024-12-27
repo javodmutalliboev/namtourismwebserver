@@ -33,6 +33,8 @@ DEBUG = True
 # Allow all origins (not recommended for production)
 # CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ALLOW_CREDENTIALS = True
+
 # Alternatively, specify allowed origins
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
