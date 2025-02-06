@@ -1,10 +1,17 @@
+version: "3.8"
 services:
   backend:
     build:
       context: .
       dockerfile: Dockerfile
     env_file:
-      - .env
+      - .env  # This tells Docker Compose to load environment variables from the .env file
     restart: always
     ports:
       - "1520:1520"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
