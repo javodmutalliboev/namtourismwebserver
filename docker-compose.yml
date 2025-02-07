@@ -11,7 +11,14 @@ services:
       - "1520:1520"
     networks:
       - app-network
+    volumes:
+      - ./staticfiles:/app/staticfiles
+      - ./media:/app/media
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  - ./staticfiles:/app/staticfiles
+  - ./media:/app/media
