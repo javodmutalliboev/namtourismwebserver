@@ -18,7 +18,3 @@ services:
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  - ./staticfiles:/app/staticfiles
-  - ./media:/app/media
