@@ -40,7 +40,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://namturapi.fazo-software.uz",
-    "https://namtur.fazo-software.uz"
+    "https://namtur.fazo-software.uz",
+    "https://api.namangan-tourism.uz"
 ]
 CSRF_TRUSTED_ORIGINS = [
     "https://namturapi.fazo-software.uz",
@@ -48,7 +49,8 @@ CSRF_TRUSTED_ORIGINS = [
 ALLOWED_HOSTS = [
     "namturapi.fazo-software.uz",
     "localhost",
-    "127.0.0.1"
+    "127.0.0.1",
+    "api.namangan-tourism.uz"
 ]
 
 APPEND_SLASH = True
