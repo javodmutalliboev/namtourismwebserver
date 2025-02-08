@@ -2,11 +2,12 @@ FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-
-RUN mkdir /app/staticfiles
-RUN mkdir /app/mediafiles
+ENV APP_HOME=/app
 
 WORKDIR /app
+
+RUN mkdir $APP_HOME/staticfiles
+RUN mkdir $APP_HOME/mediafiles
 
 COPY requirements.txt /app/
 RUN apt-get update && \
