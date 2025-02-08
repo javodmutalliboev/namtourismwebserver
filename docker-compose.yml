@@ -7,7 +7,6 @@ services:
     env_file:
       - .env  # This tells Docker Compose to load environment variables from the .env file
     restart: always
-    command: gunicorn --bind 0.0.0.0:1520 namtourism.wsgi:application
     ports:
       - "1520:1520"
     volumes:
