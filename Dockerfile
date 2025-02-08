@@ -20,5 +20,8 @@ RUN apt-get update && \
 COPY . /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Collect static files automatically
+RUN python manage.py collectstatic --noinput
+
 EXPOSE 1520
 CMD ["gunicorn", "--bind", "0.0.0.0:1520", "namtourism.wsgi:application"]
