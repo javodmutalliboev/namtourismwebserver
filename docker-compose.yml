@@ -10,7 +10,9 @@ services:
     ports:
       - "1520:1520"
     volumes:
-      - static_volume:/app/staticfiles
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
 
 volumes:
   static_volume:
+  media_volume:
