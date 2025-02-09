@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 from datetime import datetime
+from .validators import validate_image_size, validate_video_size, validate_video_file
 
 
 def news_image_upload_path(instance, filename):
@@ -95,7 +96,8 @@ class Festival(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     banner = models.ImageField(
-        upload_to=festival_image_upload_path, blank=True, null=True
+        upload_to=festival_image_upload_path, blank=True, null=True,
+        validators=[validate_image_size]
     )
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -124,7 +126,8 @@ class FestivalImage(models.Model):
     festival = models.ForeignKey(
         Festival, related_name="images", on_delete=models.CASCADE
     )
-    image = models.ImageField(upload_to=festival_image_upload_path)
+    image = models.ImageField(upload_to=festival_image_upload_path,
+                              validators=[validate_image_size])
 
     def __str__(self):
         return f"Image for {self.festival.name_uz or ''}"
@@ -175,7 +178,7 @@ class News(models.Model):
     content_ru = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    image = models.ImageField(upload_to=news_image_upload_path)
+    image = models.ImageField(upload_to=news_image_upload_path, validators=[validate_image_size])
     video_i_frame = models.TextField(blank=True, null=True)
     location_i_frame = models.TextField(blank=True, null=True)
     category = models.ForeignKey(
@@ -216,7 +219,7 @@ def delete_news_image_file(sender, instance, **kwargs):
 
 class NewsImage(models.Model):
     news = models.ForeignKey(News, related_name="images", on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=news_image_upload_path)
+    image = models.ImageField(upload_to=news_image_upload_path, validators=[validate_image_size])
 
     def __str__(self):
         return f"Image for {self.news.title_uz or ''}"
@@ -281,7 +284,8 @@ def delete_social_media_icon_file(sender, instance, **kwargs):
 class Sponsor(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     url = models.URLField(blank=True, null=True)
-    logo = models.ImageField(upload_to=sponsor_logo_upload_path, blank=True, null=True)
+    logo = models.ImageField(upload_to=sponsor_logo_upload_path, blank=True, null=True,
+                             validators=[validate_image_size])
 
     def __str__(self):
         return self.name or ""
@@ -323,7 +327,8 @@ class AboutUs(models.Model):
     content_en = models.TextField(blank=True, null=True)
     content_ru = models.TextField(blank=True, null=True)
     image = models.ImageField(
-        upload_to=about_us_image_upload_path, blank=True, null=True
+        upload_to=about_us_image_upload_path, blank=True, null=True,
+        validators=[validate_image_size]
     )
 
     def __str__(self):
@@ -391,7 +396,8 @@ class PhotoGallery(models.Model):
     location_i_frame = models.TextField(blank=True, null=True)
     video_i_frame = models.TextField(blank=True, null=True)
     banner = models.ImageField(
-        upload_to=photo_gallery_image_upload_path, blank=True, null=True
+        upload_to=photo_gallery_image_upload_path, blank=True, null=True,
+        validators=[validate_image_size]
     )
 
     def __str__(self):
@@ -406,7 +412,8 @@ class PhotoGalleryImage(models.Model):
     photo_gallery = models.ForeignKey(
         PhotoGallery, related_name="images", on_delete=models.CASCADE
     )
-    image = models.ImageField(upload_to=photo_gallery_image_upload_path)
+    image = models.ImageField(upload_to=photo_gallery_image_upload_path,
+                              validators=[validate_image_size])
 
     def __str__(self):
         return f"{self.photo_gallery.title_uz} uchun rasm"
@@ -432,10 +439,12 @@ class FestivalPoster(models.Model):
     description_en = models.TextField(blank=True, null=True)
     description_ru = models.TextField(blank=True, null=True)
     logo = models.ImageField(
-        upload_to=festival_poster_logo_upload_path, blank=True, null=True
+        upload_to=festival_poster_logo_upload_path, blank=True, null=True,
+        validators=[validate_image_size]
     )
     video = models.FileField(
-        upload_to=festival_poster_video_upload_path, blank=True, null=True
+        upload_to=festival_poster_video_upload_path, blank=True, null=True,
+        validators=[validate_video_size, validate_video_file]
     )
 
     def __str__(self):
